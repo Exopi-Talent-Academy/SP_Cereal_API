@@ -12,6 +12,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Cereal_API.API\Cereal_API.API.csproj" />
+    <ProjectReference Include="..\Cereal_API.Shared\Cereal_API.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
