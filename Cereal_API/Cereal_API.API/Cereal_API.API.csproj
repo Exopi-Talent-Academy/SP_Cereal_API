@@ -30,4 +30,8 @@
     <ProjectReference Include="..\Cereal_API.Shared\Cereal_API.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Endpoints\" />
+  </ItemGroup>
+
 </Project>
