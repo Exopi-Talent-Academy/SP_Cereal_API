@@ -8,50 +8,51 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/Dotnet.gitignore
 
 # Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
 [Bb]in/
 [Oo]bj/
-[Ll]og/
-[Ll]ogs/
 
-# .NET Core
-project.lock.json
-project.fragment.lock.json
-artifacts/
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 
-# ASP.NET Scaffolding
-ScaffoldingReadMe.txt
+# Rider
+.idea/
 
-# NuGet Packages
+# VS Code
+.vscode/
+
+# Test Results
+TestResults/
+*.trx
+
+# NuGet
+packages/
 *.nupkg
-# NuGet Symbol Packages
-*.snupkg
 
-# dotenv environment variables file
-.env
+# Logs
+*.log
 
-# Others
-~$*
-*~
-CodeCoverage/
+# Publish output
+publish/
 
-# MSBuild Binary and Structured Log
-*.binlog
+# Entity Framework
+*.db-wal
+*.db-shm
 
-# MSTest test Results
-[Tt]est[Rr]esult*/
-[Bb]uild[Ll]og.*
+# SQLite
+# Ignore the database if it's only local development.
+# Comment this out if your project ships with a seeded database.
+*.db
 
-# NUnit
-*.VisualState.xml
-TestResult.xml
-nunit-*.xml
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Mac
+.DS_Store
+
+# Generated files
+Generated/

@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Cereal_API.API/Cereal_API.API.csproj" />
+  <Project Path="Cereal_API.Shared/Cereal_API.Shared.csproj" />
+  <Project Path="Cereal_API.Tests/Cereal_API.Tests.csproj" />
+  <Project Path="Cereal_API.WPF/Cereal_API.WPF.csproj" />
+</Solution>
