@@ -1,43 +1,45 @@
-﻿using Cereal_API.Shared.Models;
+﻿using Cereal_API.API.Services;
+using Cereal_API.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cereal_API.API.Controllers;
 
 [ApiController]
 [Route("api/cereal")]
-public class CerealController : ControllerBase
+public class CerealController(ICerealService cerealService) : ControllerBase
 {
-    [HttpGet]
-    public IEnumerable<CerealData[]> Get()
+    [HttpGet(Name = "GetAllCereals")]
+    public IEnumerable<CerealData[]> GetAll()
     {
         throw new NotImplementedException();
     }
 
-    [HttpGet("{id}")]
-    public IEnumerable<CerealData> Get(int id)
+    [HttpGet("{id}", Name = "GetCereal")]
+    public CerealData Get(int id)
+    {
+        //throw new NotImplementedException();
+        return cerealService.GetCereal(id);
+    }
+
+    [HttpGet("{id}/image")]
+    public IActionResult GetImage(int id)   // Unsure about the return type here
     {
         throw new NotImplementedException();
     }
 
-    /*[HttpGet] // Maybe make this in another Controller?
-    public string GetImage()    // Consider the return type of the image (path or actual file?) and how to aquire it
+    [HttpPost(Name = "CreateCereal")]
+    public IActionResult Create(CerealData data)
     {
-        throw new NotImplementedException();
-    }*/
+        throw new NotImplementedException(); 
+    }
 
-    [HttpPost()]
+    [HttpPut(Name = "UpdateCereal")]
     public IActionResult Update(CerealData data)
     {
         throw new NotImplementedException();
     }
 
-    [HttpPost("{id}")]
-    public IActionResult Add(int id)
-    {
-        throw new NotImplementedException(); 
-    }
-
-    [HttpDelete("{id}")]
+    [HttpDelete("{id}", Name = "DeleteCereal")]
     public IActionResult Delete(int id)
     {
         throw new NotImplementedException();
