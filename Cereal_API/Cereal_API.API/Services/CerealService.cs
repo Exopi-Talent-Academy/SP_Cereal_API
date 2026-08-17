@@ -32,6 +32,9 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
     public void CreateCereal(CerealData cereal)
     {
+        if (!Enum.IsDefined(cereal.Manufacturer)) throw new ArgumentException("Invalid manufacturer");
+        if (!Enum.IsDefined(cereal.Type)) throw new ArgumentException("Invalid cereal type");
+
         cereal.Id = 0;
         _db.Cereals.Add(cereal);
         _db.SaveChanges();
