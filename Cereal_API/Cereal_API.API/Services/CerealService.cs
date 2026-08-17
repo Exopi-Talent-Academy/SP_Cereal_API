@@ -7,6 +7,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 {
     private readonly AppDbContext _db = db;
     private readonly string _imageFolder = imageFolder;
+    private const string imageExtension = ".jpg";
 
     public List<CerealData> GetAllCereals()
     {
@@ -18,9 +19,15 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
         return _db.Cereals.FirstOrDefault(c => c.Id == id) ?? throw new KeyNotFoundException($"Cereal with id {id} not found");
     }
 
-    public void GetImage(int id)    // Unsure about the return type here
+    public byte[] GetImage(int id)
     {
-        throw new NotImplementedException();
+        CerealData existingCereal = GetCereal(id);
+
+        string imagePath = Path.Combine(_imageFolder, existingCereal.Name + imageExtension);
+
+        if (!File.Exists(imagePath)) throw new FileNotFoundException($"Cereal image \"{existingCereal.Name}\" with id {id} not found at path: {imagePath}", imagePath);
+
+        return File.ReadAllBytes(imagePath);
     }
 
     public void CreateCereal(CerealData cereal)

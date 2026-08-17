@@ -7,10 +7,318 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Database\Cereal Images\100%25Bran.jpg" />
+    <None Remove="Database\Cereal Images\100%25NaturalBran.jpg" />
+    <None Remove="Database\Cereal Images\All-Bran with Extra Fiber.jpg" />
+    <None Remove="Database\Cereal Images\All-Bran.jpg" />
+    <None Remove="Database\Cereal Images\Almond Delight.jpg" />
+    <None Remove="Database\Cereal Images\Apple Cinnamon Cheerios.png" />
+    <None Remove="Database\Cereal Images\Apple Jacks.jpg" />
+    <None Remove="Database\Cereal Images\Basic 4.jpg" />
+    <None Remove="Database\Cereal Images\Bran Chex.jpg" />
+    <None Remove="Database\Cereal Images\Bran Flakes.jpg" />
+    <None Remove="Database\Cereal Images\Cap%27n%27Crunch.jpg" />
+    <None Remove="Database\Cereal Images\Cheerios.jpg" />
+    <None Remove="Database\Cereal Images\Cinnamon Toast Crunch.jpg" />
+    <None Remove="Database\Cereal Images\Clusters.jpg" />
+    <None Remove="Database\Cereal Images\Cocoa Puffs.jpg" />
+    <None Remove="Database\Cereal Images\Corn Chex.jpg" />
+    <None Remove="Database\Cereal Images\Corn Flakes.jpg" />
+    <None Remove="Database\Cereal Images\Corn Pops.jpg" />
+    <None Remove="Database\Cereal Images\Count Chocula.jpg" />
+    <None Remove="Database\Cereal Images\Cracklin%27 Oat Bran.jpg" />
+    <None Remove="Database\Cereal Images\Cream of Wheat %28Quick%29.png" />
+    <None Remove="Database\Cereal Images\Crispix.jpg" />
+    <None Remove="Database\Cereal Images\Crispy Wheat &amp; Raisins.jpg" />
+    <None Remove="Database\Cereal Images\Double Chex.jpg" />
+    <None Remove="Database\Cereal Images\Froot Loops.jpg" />
+    <None Remove="Database\Cereal Images\Frosted Flakes.png" />
+    <None Remove="Database\Cereal Images\Frosted Mini-Wheats.jpg" />
+    <None Remove="Database\Cereal Images\Fruit &amp; Fibre Dates, Walnuts, and Oats.jpg" />
+    <None Remove="Database\Cereal Images\Fruitful Bran.jpg" />
+    <None Remove="Database\Cereal Images\Fruity Pebbles.jpg" />
+    <None Remove="Database\Cereal Images\Golden Crisp.jpg" />
+    <None Remove="Database\Cereal Images\Golden Grahams.jpg" />
+    <None Remove="Database\Cereal Images\Grape Nuts Flakes.jpg" />
+    <None Remove="Database\Cereal Images\Grape-Nuts.jpg" />
+    <None Remove="Database\Cereal Images\Great Grains Pecan.jpg" />
+    <None Remove="Database\Cereal Images\Honey Graham Ohs.jpg" />
+    <None Remove="Database\Cereal Images\Honey nut Cheerios.jpg" />
+    <None Remove="Database\Cereal Images\Honey-comb.jpg" />
+    <None Remove="Database\Cereal Images\Just Right Crunchy Nuggets.jpg" />
+    <None Remove="Database\Cereal Images\Just Right Fruit &amp; Nut.jpg" />
+    <None Remove="Database\Cereal Images\Kix.jpg" />
+    <None Remove="Database\Cereal Images\Life.jpg" />
+    <None Remove="Database\Cereal Images\Lucky Charms.jpg" />
+    <None Remove="Database\Cereal Images\Maypo.jpg" />
+    <None Remove="Database\Cereal Images\Muesli Raisins, Dates, &amp; Almons.jpg" />
+    <None Remove="Database\Cereal Images\Muesli Raisins, Peaches, &amp; Pecans.jpg" />
+    <None Remove="Database\Cereal Images\Mueslix Crispy Blend.jpg" />
+    <None Remove="Database\Cereal Images\Multi-Grain Cheerios.jpg" />
+    <None Remove="Database\Cereal Images\Nut&amp;Honey Crunch.jpg" />
+    <None Remove="Database\Cereal Images\Nutri-Grain Almond-Raisin.jpg" />
+    <None Remove="Database\Cereal Images\Nutri-Grain Wheat.jpg" />
+    <None Remove="Database\Cereal Images\Oatmeal Raisin Crisp.jpg" />
+    <None Remove="Database\Cereal Images\Post Nat, Raisin Bran.jpg" />
+    <None Remove="Database\Cereal Images\Product 19.jpg" />
+    <None Remove="Database\Cereal Images\Puffed Rice.jpg" />
+    <None Remove="Database\Cereal Images\Puffed Wheat.jpg" />
+    <None Remove="Database\Cereal Images\Quaker Oat Squares.jpg" />
+    <None Remove="Database\Cereal Images\Quaker Oatmeal.jpg" />
+    <None Remove="Database\Cereal Images\Raisin Bran.jpg" />
+    <None Remove="Database\Cereal Images\Raisin Nut Bran.jpg" />
+    <None Remove="Database\Cereal Images\Raisin Squares.jpg" />
+    <None Remove="Database\Cereal Images\Rice Chex.jpg" />
+    <None Remove="Database\Cereal Images\Rice Krispies.jpg" />
+    <None Remove="Database\Cereal Images\Shredded Wheat spoon size.jpg" />
+    <None Remove="Database\Cereal Images\Shredded Wheat%27n%27Bran.jpg" />
+    <None Remove="Database\Cereal Images\Shredded Wheat.jpg" />
+    <None Remove="Database\Cereal Images\Smacks.jpg" />
+    <None Remove="Database\Cereal Images\Special K.jpg" />
+    <None Remove="Database\Cereal Images\Strawberry Fruit Wheats.jpg" />
+    <None Remove="Database\Cereal Images\Total Corn Flakes.jpg" />
+    <None Remove="Database\Cereal Images\Total Raisin Bran.jpg" />
+    <None Remove="Database\Cereal Images\Total Whole Grain.jpg" />
+    <None Remove="Database\Cereal Images\Triples.jpg" />
+    <None Remove="Database\Cereal Images\Trix.jpg" />
+    <None Remove="Database\Cereal Images\Wheat Chex.jpg" />
+    <None Remove="Database\Cereal Images\Wheaties Honey Gold.jpg" />
+    <None Remove="Database\Cereal Images\Wheaties.jpg" />
     <None Remove="Database\cereal.csv" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Database\Cereal Images\100%Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\100%NaturalBran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\All-Bran with Extra Fiber.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\All-Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Almond Delight.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Apple Cinnamon Cheerios.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Apple Jacks.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Basic 4.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Bran Chex.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Bran Flakes.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Cap'n'Crunch.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Cheerios.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Cinnamon Toast Crunch.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Clusters.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Cocoa Puffs.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Corn Chex.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Corn Flakes.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Corn Pops.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Count Chocula.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Cracklin' Oat Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Cream of Wheat (Quick).png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Crispix.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Crispy Wheat &amp; Raisins.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Double Chex.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Froot Loops.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Frosted Flakes.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Frosted Mini-Wheats.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Fruit &amp; Fibre Dates, Walnuts, and Oats.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Fruitful Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Fruity Pebbles.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Golden Crisp.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Golden Grahams.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Grape Nuts Flakes.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Grape-Nuts.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Great Grains Pecan.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Honey Graham Ohs.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Honey nut Cheerios.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Honey-comb.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Just Right Crunchy Nuggets.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Just Right Fruit &amp; Nut.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Kix.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Life.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Lucky Charms.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Maypo.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Muesli Raisins, Dates, &amp; Almons.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Muesli Raisins, Peaches, &amp; Pecans.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Mueslix Crispy Blend.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Multi-Grain Cheerios.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Nut&amp;Honey Crunch.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Nutri-Grain Almond-Raisin.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Nutri-Grain Wheat.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Oatmeal Raisin Crisp.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Post Nat, Raisin Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Product 19.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Puffed Rice.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Puffed Wheat.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Quaker Oat Squares.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Quaker Oatmeal.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Raisin Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Raisin Nut Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Raisin Squares.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Rice Chex.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Rice Krispies.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Shredded Wheat spoon size.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Shredded Wheat'n'Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Shredded Wheat.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Smacks.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Special K.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Strawberry Fruit Wheats.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Total Corn Flakes.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Total Raisin Bran.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Total Whole Grain.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Triples.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Trix.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Wheat Chex.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Wheaties Honey Gold.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Database\Cereal Images\Wheaties.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Database\cereal.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

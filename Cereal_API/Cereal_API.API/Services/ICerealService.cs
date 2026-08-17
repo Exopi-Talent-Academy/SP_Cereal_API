@@ -8,7 +8,7 @@ public interface ICerealService
 
     CerealData GetCereal(int id);
 
-    void GetImage(int id);  // Unsure about the return type here
+    byte[] GetImage(int id);
 
     void CreateCereal(CerealData cereal);
 
