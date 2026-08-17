@@ -63,11 +63,14 @@ public sealed class CerealServiceTests
 
     [TestMethod]
     public void CreateCereal_ValidData_AddsCereal()
+    [DataRow(0)]    // Valid Id
+    [DataRow(15)]   // Invalid Id
+    public void CreateCereal_AddsCereal(int id)
     {
         // Arrange
         int expectedId = 1;
         string expectedName = "A";
-        CerealData newCereal = new() { Id = 0, Name = expectedName };   // Check if it is the functions responsability to set the ID
+        CerealData newCereal = new() { Id = id, Name = expectedName };
 
         using var context = TestHelper.CreateContext();
         context.SaveChanges();
@@ -83,16 +86,8 @@ public sealed class CerealServiceTests
         Assert.HasCount(1, all);
         Assert.AreEqual(expectedName, all[0].Name);
         Assert.AreEqual(expectedId, all[0].Id);
-        Assert.AreNotEqual(0, all[0].Id);
+        Assert.AreNotEqual(id, all[0].Id);
     }
-
-    /*[TestMethod]  // Actually not sure if this test is needed
-    public void CreateCereal_InvalidData_ThrowsArgumentException()
-    {
-        var svc = new FakeCerealService();
-        var cereal = Sample(0, "");
-        AssertThrows<ArgumentException>(() => svc.CreateCereal(cereal));
-    }*/
 
     [TestMethod]
     public void UpdateCereal_ExistingId_UpdatesValues()
