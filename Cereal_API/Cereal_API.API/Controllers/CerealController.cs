@@ -11,32 +11,66 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     [HttpGet(Name = "GetAllCereals")]
     public IActionResult GetAll()
     {
-        throw new NotImplementedException();
+        return Ok(cerealService.GetAllCereals());
     }
 
     [HttpGet("{id}", Name = "GetCereal")]
     public IActionResult Get(int id)
     {
-        //throw new NotImplementedException();
-        return cerealService.GetCereal(id);
+        try
+        {
+            return Ok(cerealService.GetCereal(id));
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpGet("{id}/image")]
     public IActionResult GetImage(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            byte[] image = cerealService.GetImage(id);
+            return File(image, "image/jpeg");
+        }
+        catch (FileNotFoundException)
+        {
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpPost(Name = "CreateCereal")]
     public IActionResult Create(CerealData data)
     {
-        throw new NotImplementedException(); 
+        try
+        {
+            cerealService.CreateCereal(data);
+            return Ok(data);
+        }
+        catch
+        {
+            return BadRequest();
+        }
     }
 
     [HttpPut(Name = "UpdateCereal")]
     public IActionResult Update(CerealData data)
     {
-        throw new NotImplementedException();
+        try
+        {
+            cerealService.UpdateCereal(data);
+            return Ok(data);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpDelete("{id}", Name = "DeleteCereal")]
