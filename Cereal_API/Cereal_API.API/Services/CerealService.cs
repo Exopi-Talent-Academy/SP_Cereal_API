@@ -25,8 +25,11 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
     public void CreateCereal(CerealData cereal)
     {
-        throw new NotImplementedException();
+        cereal.Id = 0;
+        _db.Cereals.Add(cereal);
+        _db.SaveChanges();
     }
+
     public void UpdateCereal(CerealData cereal)
     {
         throw new NotImplementedException();
