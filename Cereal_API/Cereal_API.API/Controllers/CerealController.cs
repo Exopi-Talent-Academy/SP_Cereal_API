@@ -9,20 +9,20 @@ namespace Cereal_API.API.Controllers;
 public class CerealController(ICerealService cerealService) : ControllerBase
 {
     [HttpGet(Name = "GetAllCereals")]
-    public IEnumerable<CerealData[]> GetAll()
+    public IActionResult GetAll()
     {
         throw new NotImplementedException();
     }
 
     [HttpGet("{id}", Name = "GetCereal")]
-    public CerealData Get(int id)
+    public IActionResult Get(int id)
     {
         //throw new NotImplementedException();
         return cerealService.GetCereal(id);
     }
 
     [HttpGet("{id}/image")]
-    public IActionResult GetImage(int id)   // Unsure about the return type here
+    public IActionResult GetImage(int id)
     {
         throw new NotImplementedException();
     }

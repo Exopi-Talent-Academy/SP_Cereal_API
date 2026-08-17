@@ -1,7 +1,7 @@
 ﻿using Cereal_API.API.Controllers;
 using Cereal_API.API.Services;
-using Cereal_API.Shared;
 using Cereal_API.Shared.Models;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace Cereal_API.Tests.APITests;
@@ -9,66 +9,194 @@ namespace Cereal_API.Tests.APITests;
 [TestClass]
 public class CerealControllerTests
 {
-    // Consider if these tests are even needed (other to check that they are calling the Service...
-    // Otherwise should the WPF HttpClient tests cover the API calls
-
-    /*[TestMethod]
-    public void GetAllCereals_ReturnsAllCereals()
+    [TestMethod]
+    public void GetAll_ReturnsOkWithCereals()
     {
         // Arrange
-        using var context = TestHelper.CreateContext();
-        context.AddRange(
-            new CerealData
-            {
-                Id = 1,
-                Name = "A"
-            },
-            new CerealData
-            {
-                Id = 2,
-                Name = "B"
-            },
-            new CerealData
-            {
-                Id = 3,
-                Name = "C"
-            });
-        context.SaveChanges();
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.GetAllCereals()).Returns(
+            [
+                new CerealData { Id = 1, Name = "A" },
+                new CerealData { Id = 2, Name = "B" },
+                new CerealData { Id = 3, Name = "C" }
+            ]);
 
-        var service = new CerealService(context);
-        var controller = new CerealController(service);
+        var controller = new CerealController(service.Object);
 
         // Act
         var actual = controller.GetAll();
 
         // Assert
-        Assert.AreEqual(3, actual.Count());
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
+        var cereals = (actual as OkObjectResult)?.Value as List<CerealData>;
+        Assert.IsNotNull(cereals);
+        Assert.HasCount(3, cereals);
     }
 
     [TestMethod]
-    public void GetCereal_ExistingId_ReturnsCereal()
+    public void Get_ValidId_ReturnsOK()
     {
         // Arrange
-        int expectedId = 15;
-        string expectedName = "A";
-        using var context = TestHelper.CreateContext();
-        context.AddRange(
-            new CerealData
-            {
-                Id = expectedId,
-                Name = expectedName
-            });
-        context.SaveChanges();
+        int expectedId = 1;
 
-        var repository = new CerealRepository(context);
-        var controller = new CerealController(repository);
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.GetCereal(expectedId)).Returns(new CerealData { Id = expectedId, Name = "A" });
+
+        var controller = new CerealController(service.Object);
 
         // Act
-        CerealData actual = controller.Get(15);
+        var actual = controller.Get(expectedId);
 
         // Assert
-        Assert.IsNotNull(actual);
-        Assert.AreEqual(expectedId, actual.Id);
-        Assert.AreEqual(expectedName, actual.Name);
-    }*/
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
+    }
+
+    [TestMethod]
+    public void Get_InvalidId_ReturnsNotFound()
+    {
+        // Arrange
+        int id = 1;
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.GetCereal(id)).Throws<KeyNotFoundException>();
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Get(id);
+
+        // Assert
+        Assert.IsInstanceOfType<NotFoundResult>(actual);
+    }
+
+    [TestMethod]
+    public void GetImage_ValidId_ReturnsFileContent()
+    {
+        // Arrange
+        int id = 1;
+        byte[] mockImage = [1, 2, 3, 4, 5];
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.GetImage(id)).Returns(mockImage);
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.GetImage(id);
+
+        // Assert
+        Assert.IsInstanceOfType<FileContentResult>(actual);
+        var image = (actual as FileContentResult)?.FileContents;
+        Assert.IsNotNull(image);
+        Assert.HasCount(5, image);
+        Assert.AreEqual(mockImage, image);
+    }
+
+    [TestMethod]
+    public void GetImage_ValidIdButMissingImage_ReturnNoContent()
+    {
+        // Arrange
+        int id = 1;
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.GetImage(id)).Throws<FileNotFoundException>();
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.GetImage(id);
+
+        // Assert
+        Assert.IsInstanceOfType<NoContentResult>(actual);
+    }
+
+    [TestMethod]
+    public void GetImage_InvalidId_ReturnNotFound()
+    {
+        // Arrange
+        int id = 1;
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.GetImage(id)).Throws<KeyNotFoundException>();
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.GetImage(id);
+
+        // Assert
+        Assert.IsInstanceOfType<NotFoundResult>(actual);
+    }
+
+    [TestMethod]
+    public void Create_ValidRequest_ReturnsOK()
+    {
+        // Arrange
+        CerealData newCereal = new() { Id = 0, Name = "New" };
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.CreateCereal(newCereal));
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Create(newCereal);
+
+        // Assert
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
+    }
+
+    [TestMethod]
+    public void Create_InvalidRequest_ReturnsBadRequest()
+    {
+        // Arrange
+        CerealData newCereal = new() { Id = 0, Name = "New" };
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.CreateCereal(newCereal)).Throws<ArgumentException>();
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Create(newCereal);
+
+        // Assert
+        Assert.IsInstanceOfType<BadRequestResult>(actual);
+    }
+
+    [TestMethod]
+    public void Update_ValidRequest_ReturnsOK()
+    {
+        // Arrange
+        CerealData newCereal = new() { Id = 1, Name = "New" };
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.UpdateCereal(newCereal));
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Update(newCereal);
+
+        // Assert
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
+    }
+
+    [TestMethod]
+    public void Delete_ExistingId_ReturnsNoContent()    // Not sure if this test is correct
+    {
+        // Arrange
+        int id = 1;
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.DeleteCereal(id));
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Delete(id);
+
+        // Assert
+        Assert.IsInstanceOfType<NoContentResult>(actual);
+    }
 }
