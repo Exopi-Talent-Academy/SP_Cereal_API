@@ -10,4 +10,6 @@ public static class TestHelper
         var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
         return new AppDbContext(options);
     }
+
+    public static string ImageFolderPath => Path.Combine(AppContext.BaseDirectory, "APITests", "Images");
 }

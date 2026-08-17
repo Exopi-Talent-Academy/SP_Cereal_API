@@ -62,7 +62,57 @@ public sealed class CerealServiceTests
     }
 
     [TestMethod]
-    public void CreateCereal_ValidData_AddsCereal()
+    public void GetImage_ValidId_ReturnsImage()
+    {
+        // Arrange
+        int id = 1;
+        string name = "Test";
+
+        using var context = TestHelper.CreateContext();
+        context.Add(new CerealData { Id = id, Name = name });
+        context.SaveChanges();
+
+        var service = new CerealService(context, TestHelper.ImageFolderPath);
+
+        // Act
+        var image = service.GetImage(id);
+
+        // Assert
+        Assert.IsNotNull(image);
+        Assert.IsNotEmpty(image);
+    }
+
+    [TestMethod]
+    public void GetImage_ValidIdButMissingImage_ThrowsFileNotFound()
+    {
+        // Arrange
+        int id = 1;
+        string name = "A";
+
+        using var context = TestHelper.CreateContext();
+        context.Add(new CerealData { Id = id, Name = name });
+        context.SaveChanges();
+
+        var service = new CerealService(context, TestHelper.ImageFolderPath);
+
+        // Act & Assert
+        Assert.ThrowsExactly<FileNotFoundException>(() => service.GetImage(id));
+    }
+
+    [TestMethod]
+    public void GetImage_InvalidId_ThrowsKeyNotFound()
+    {
+        // Arrange
+        using var context = TestHelper.CreateContext();
+        context.SaveChanges();
+
+        var service = new CerealService(context, TestHelper.ImageFolderPath);
+
+        // Act & Assert
+        Assert.ThrowsExactly<KeyNotFoundException>(() => service.GetImage(1));
+    }
+
+    [TestMethod]
     [DataRow(0)]    // Valid Id
     [DataRow(15)]   // Invalid Id
     public void CreateCereal_AddsCereal(int id)

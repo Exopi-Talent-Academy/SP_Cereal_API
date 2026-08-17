@@ -3,9 +3,10 @@ using Cereal_API.Shared.Models;
 
 namespace Cereal_API.API.Services;
 
-public class CerealService(AppDbContext db) : ICerealService
+public class CerealService(AppDbContext db, string imageFolder = "") : ICerealService
 {
     private readonly AppDbContext _db = db;
+    private readonly string _imageFolder = imageFolder;
 
     public List<CerealData> GetAllCereals()
     {

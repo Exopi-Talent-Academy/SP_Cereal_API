@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="APITests\Images\Test.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="APITests\Images\Test.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MSTest" Version="4.0.2" />
 	<PackageReference Include="Moq" Version="4.20.70" />
   </ItemGroup>
