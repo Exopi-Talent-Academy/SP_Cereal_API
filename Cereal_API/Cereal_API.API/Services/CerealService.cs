@@ -41,6 +41,9 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
     public void DeleteCereal(int id)
     {
-        throw new NotImplementedException();
+        CerealData existingCereal = GetCereal(id);
+
+        _db.Cereals.Remove(existingCereal);
+        _db.SaveChanges();
     }
 }
