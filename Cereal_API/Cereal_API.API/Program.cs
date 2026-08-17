@@ -1,4 +1,5 @@
 using Cereal_API.API.Database;
+using Cereal_API.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,9 +7,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 // SQLite database service
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(AppDbContext.ConnectionPath));
+
+var imageFolder = Path.Combine(builder.Environment.ContentRootPath, "Database", builder.Configuration["ImageSettings:Folder"]!);
+builder.Services.AddTransient<ICerealService>(provider =>
 {
-    options.UseSqlite(AppDbContext.ConnectionPath);
+    return new CerealService(provider.GetRequiredService<AppDbContext>(), imageFolder);
 });
 
 builder.Services.AddControllers();

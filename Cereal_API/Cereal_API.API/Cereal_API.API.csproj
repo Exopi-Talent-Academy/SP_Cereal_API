@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Database\Cereal Images\100%25Bran.jpg" />
-    <None Remove="Database\Cereal Images\100%25NaturalBran.jpg" />
     <None Remove="Database\Cereal Images\All-Bran with Extra Fiber.jpg" />
     <None Remove="Database\Cereal Images\All-Bran.jpg" />
     <None Remove="Database\Cereal Images\Almond Delight.jpg" />
@@ -59,7 +57,6 @@
     <None Remove="Database\Cereal Images\Nutri-Grain Almond-Raisin.jpg" />
     <None Remove="Database\Cereal Images\Nutri-Grain Wheat.jpg" />
     <None Remove="Database\Cereal Images\Oatmeal Raisin Crisp.jpg" />
-    <None Remove="Database\Cereal Images\Post Nat, Raisin Bran.jpg" />
     <None Remove="Database\Cereal Images\Product 19.jpg" />
     <None Remove="Database\Cereal Images\Puffed Rice.jpg" />
     <None Remove="Database\Cereal Images\Puffed Wheat.jpg" />
@@ -88,10 +85,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Database\Cereal Images\100%Bran.jpg">
+    <Content Include="Database\Cereal Images\100%25 Bran.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Database\Cereal Images\100%NaturalBran.jpg">
+    <Content Include="Database\Cereal Images\100%25 Natural Bran.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Database\Cereal Images\All-Bran with Extra Fiber.jpg">
@@ -244,7 +241,7 @@
     <Content Include="Database\Cereal Images\Oatmeal Raisin Crisp.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Database\Cereal Images\Post Nat, Raisin Bran.jpg">
+    <Content Include="Database\Cereal Images\Post Nat. Raisin Bran.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Database\Cereal Images\Product 19.jpg">
