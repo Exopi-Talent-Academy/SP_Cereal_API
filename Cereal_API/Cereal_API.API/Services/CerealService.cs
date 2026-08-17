@@ -32,7 +32,11 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
     public void UpdateCereal(CerealData cereal)
     {
-        throw new NotImplementedException();
+        CerealData existingCereal = GetCereal(cereal.Id);
+        if (existingCereal == cereal) return;
+
+        _db.Cereals.Entry(existingCereal).CurrentValues.SetValues(cereal);
+        _db.SaveChanges();
     }
 
     public void DeleteCereal(int id)
