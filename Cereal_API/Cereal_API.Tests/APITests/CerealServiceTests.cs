@@ -24,6 +24,7 @@ public sealed class CerealServiceTests
         var actual = service.GetAllCereals();
 
         // Assert
+        Assert.IsNotNull(actual);
         Assert.HasCount(3, actual);
     }
 
@@ -41,7 +42,7 @@ public sealed class CerealServiceTests
         var service = new CerealService(context);
 
         // Act
-        CerealData actual = service.GetCereal(15);
+        CerealData actual = service.GetCereal(expectedId);
 
         // Assert
         Assert.IsNotNull(actual);
@@ -66,7 +67,7 @@ public sealed class CerealServiceTests
         // Arrange
         int expectedId = 1;
         string expectedName = "A";
-        CerealData newCereal = new() { Id = expectedId, Name = expectedName };
+        CerealData newCereal = new() { Id = 0, Name = expectedName };   // Check if it is the functions responsability to set the ID
 
         using var context = TestHelper.CreateContext();
         context.SaveChanges();
@@ -85,7 +86,7 @@ public sealed class CerealServiceTests
         Assert.AreNotEqual(0, all[0].Id);
     }
 
-    /*[TestMethod]
+    /*[TestMethod]  // Actually not sure if this test is needed
     public void CreateCereal_InvalidData_ThrowsArgumentException()
     {
         var svc = new FakeCerealService();
@@ -93,41 +94,84 @@ public sealed class CerealServiceTests
         AssertThrows<ArgumentException>(() => svc.CreateCereal(cereal));
     }*/
 
-    /*[TestMethod]
+    [TestMethod]
     public void UpdateCereal_ExistingId_UpdatesValues()
     {
-        var svc = new FakeCerealService(new[] { Sample(1, "Old") });
-        var updated = Sample(1, "Updated");
-        svc.UpdateCereal(updated);
-        var c = svc.GetCereal(1);
-        Assert.AreEqual("Updated", c.Name);
-    }*/
+        // Arrange
+        int expectedId = 1;
+        string oldName = "Old";
+        string updatedName = "Updated";
+        CerealData newCereal = new() { Id = expectedId, Name = updatedName };
 
-    /*[TestMethod]
+        using var context = TestHelper.CreateContext();
+        context.Add(new CerealData { Id = expectedId, Name = oldName });
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act
+        service.UpdateCereal(newCereal);
+        var result = service.GetCereal(expectedId);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(updatedName, result.Name);
+        Assert.AreEqual(expectedId, result.Id);
+        Assert.AreNotEqual(oldName, result.Name);
+    }
+
+    [TestMethod]
+    public void UpdateCereal_InvalidId_ThrowsKeyNotFound()
+    {
+        // Arrange
+        CerealData newCereal = new() { Id = 1, Name = "Updated" };
+
+        using var context = TestHelper.CreateContext();
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act & Assert
+        Assert.ThrowsExactly<KeyNotFoundException>(() => service.UpdateCereal(newCereal));
+    }
+
+    [TestMethod]
     public void DeleteCereal_ExistingId_RemovesCereal()
     {
-        var svc = new FakeCerealService(new[] { Sample(1, "ToDelete") });
-        svc.DeleteCereal(1);
-        AssertThrows<KeyNotFoundException>(() => svc.GetCereal(1));
-    }*/
+        // Arrange
+        int deletedId = 2;
 
-    /*[TestMethod]
+        using var context = TestHelper.CreateContext();
+        context.AddRange(
+            new CerealData { Id = 1, Name = "A" },
+            new CerealData { Id = 2, Name = "B" },
+            new CerealData { Id = 3, Name = "C" }
+            );
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act
+        service.DeleteCereal(deletedId);
+        var all = service.GetAllCereals();
+
+        // Assert
+        Assert.IsNotNull(all);
+        Assert.HasCount(2, all);
+        Assert.AreEqual(1, all[0].Id);
+        Assert.AreEqual(3, all[1].Id);
+        Assert.AreNotEqual(deletedId, all[1].Id);
+        Assert.ThrowsExactly<KeyNotFoundException>(() => service.GetCereal(deletedId));
+    }
+
+    [TestMethod]
     public void DeleteCereal_InvalidId_ThrowsKeyNotFound()
     {
-        var svc = new FakeCerealService();
-        AssertThrows<KeyNotFoundException>(() => svc.DeleteCereal(123));
-    }*/
+        // Arrange
+        using var context = TestHelper.CreateContext();
+        var service = new CerealService(context);
 
-    private static void AssertThrows<T>(Action action) where T : Exception
-    {
-        try
-        {
-            action();
-            Assert.Fail($"Expected exception of type {typeof(T).Name} but no exception was thrown.");
-        }
-        catch (T)
-        {
-            // expected
-        }
+        // Act & Assert
+        Assert.ThrowsExactly<KeyNotFoundException>(() => service.DeleteCereal(1));
     }
 }
