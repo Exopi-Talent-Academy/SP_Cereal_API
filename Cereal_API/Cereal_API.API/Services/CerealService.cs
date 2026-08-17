@@ -10,12 +10,11 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
     public List<CerealData> GetAllCereals()
     {
-        throw new NotImplementedException();
+        return _db.Cereals.ToList();
     }
 
     public CerealData GetCereal(int id)
     {
-        //throw new NotImplementedException();
         return _db.Cereals.FirstOrDefault(c => c.Id == id) ?? throw new KeyNotFoundException($"Cereal with id {id} not found");
     }
 
