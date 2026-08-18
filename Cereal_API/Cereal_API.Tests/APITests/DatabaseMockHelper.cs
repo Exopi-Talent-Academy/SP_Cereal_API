@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Cereal_API.Tests.APITests;
 
-public static class TestHelper
+public static class DatabaseMockHelper
 {
     public static AppDbContext CreateContext()
     {
