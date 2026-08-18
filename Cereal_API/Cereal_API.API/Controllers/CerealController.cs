@@ -51,7 +51,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         try
         {
             cerealService.CreateCereal(data);
-            return Ok(data);
+            return Ok();
         }
         catch
         {
@@ -65,7 +65,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         try
         {
             cerealService.UpdateCereal(data);
-            return Ok(data);
+            return Ok();
         }
         catch (KeyNotFoundException)
         {
@@ -76,6 +76,14 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     [HttpDelete("{id}", Name = "DeleteCereal")]
     public IActionResult Delete(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            cerealService.DeleteCereal(id);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }
