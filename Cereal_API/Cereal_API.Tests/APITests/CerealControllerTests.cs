@@ -135,15 +135,14 @@ public class CerealControllerTests
         CerealData newCereal = new() { Id = 0, Name = "New" };
 
         var service = new Mock<ICerealService>();
-        service.Setup(s => s.CreateCereal(newCereal));
-
         var controller = new CerealController(service.Object);
 
         // Act
         var actual = controller.Create(newCereal);
 
         // Assert
-        Assert.IsInstanceOfType<OkObjectResult>(actual);
+        Assert.IsInstanceOfType<OkResult>(actual);
+        service.Verify(x => x.CreateCereal(newCereal), Times.Once);
     }
 
     [TestMethod]
@@ -171,7 +170,24 @@ public class CerealControllerTests
         CerealData newCereal = new() { Id = 1, Name = "New" };
 
         var service = new Mock<ICerealService>();
-        service.Setup(s => s.UpdateCereal(newCereal));
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Update(newCereal);
+
+        // Assert
+        Assert.IsInstanceOfType<OkResult>(actual);
+        service.Verify(x => x.UpdateCereal(newCereal), Times.Once);
+    }
+
+    [TestMethod]
+    public void Update_InvalidId_ReturnNotFound()
+    {
+        // Arrange
+        CerealData newCereal = new() { Id = 1, Name = "New" };
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.UpdateCereal(newCereal)).Throws<KeyNotFoundException>();
 
         var controller = new CerealController(service.Object);
 
@@ -179,18 +195,16 @@ public class CerealControllerTests
         var actual = controller.Update(newCereal);
 
         // Assert
-        Assert.IsInstanceOfType<OkObjectResult>(actual);
+        Assert.IsInstanceOfType<NotFoundResult>(actual);
     }
 
     [TestMethod]
-    public void Delete_ExistingId_ReturnsNoContent()    // Not sure if this test is correct
+    public void Delete_ExistingId_ReturnsNoContent()
     {
         // Arrange
         int id = 1;
 
         var service = new Mock<ICerealService>();
-        service.Setup(s => s.DeleteCereal(id));
-
         var controller = new CerealController(service.Object);
 
         // Act
@@ -198,5 +212,24 @@ public class CerealControllerTests
 
         // Assert
         Assert.IsInstanceOfType<NoContentResult>(actual);
+        service.Verify(x => x.DeleteCereal(id), Times.Once);
+    }
+
+    [TestMethod]
+    public void Delete_InvalidId_ReturnNotFound()
+    {
+        // Arrange
+        int id = 1;
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.DeleteCereal(id)).Throws<KeyNotFoundException>();
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Delete(id);
+
+        // Assert
+        Assert.IsInstanceOfType<NotFoundResult>(actual);
     }
 }
