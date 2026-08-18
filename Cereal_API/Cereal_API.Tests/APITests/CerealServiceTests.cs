@@ -1,4 +1,5 @@
 ﻿using Cereal_API.API.Services;
+using Cereal_API.Shared;
 using Cereal_API.Shared.Models;
 
 namespace Cereal_API.Tests.APITests;
@@ -137,6 +138,24 @@ public sealed class CerealServiceTests
         Assert.AreEqual(expectedName, all[0].Name);
         Assert.AreEqual(expectedId, all[0].Id);
         Assert.AreNotEqual(id, all[0].Id);
+    }
+
+    [TestMethod]
+    [DataRow((CerealEnums.Manufacturer)999, (CerealEnums.Type)0)]
+    [DataRow((CerealEnums.Manufacturer)0, (CerealEnums.Type)999)]
+    [DataRow((CerealEnums.Manufacturer)999, (CerealEnums.Type)999)]
+    public void CreateCereal_InvalidEnums_ThrowsArgumentException(CerealEnums.Manufacturer manufacturer, CerealEnums.Type type)
+    {
+        // Arrange
+        CerealData newCereal = new() { Id = 0, Name = "A", Manufacturer = manufacturer, Type = type };
+
+        using var context = TestHelper.CreateContext();
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act & Assert
+        Assert.ThrowsExactly<ArgumentException>(() => service.CreateCereal(newCereal));
     }
 
     [TestMethod]
