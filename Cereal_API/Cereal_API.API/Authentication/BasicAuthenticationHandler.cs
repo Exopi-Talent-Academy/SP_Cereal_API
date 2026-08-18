@@ -31,7 +31,7 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
 
         try
         {
-            var authHeader = AuthenticationHeaderValue.Parse(value);
+            var authHeader = AuthenticationHeaderValue.Parse(value!);
 
             if (!"Basic".Equals(authHeader.Scheme, StringComparison.OrdinalIgnoreCase))
             {
