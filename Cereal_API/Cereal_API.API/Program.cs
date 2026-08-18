@@ -1,12 +1,17 @@
+using Cereal_API.API.Authentication;
 using Cereal_API.API.Database;
 using Cereal_API.API.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add authentication
+builder.Services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
+builder.Services.AddAuthorization();
 
-// SQLite database service
+// Add SQLite database service
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(AppDbContext.ConnectionPath));
 
 var imageFolder = Path.Combine(builder.Environment.ContentRootPath, "Database", builder.Configuration["ImageSettings:Folder"]!);
@@ -18,7 +23,32 @@ builder.Services.AddTransient<ICerealService>(provider =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Basic", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Basic",
+        In = ParameterLocation.Header,
+        Description = "Basic Authentication"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Basic"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 var app = builder.Build();
 
@@ -39,6 +69,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,5 +1,6 @@
 ﻿using Cereal_API.API.Services;
 using Cereal_API.Shared.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cereal_API.API.Controllers;
@@ -45,6 +46,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost(Name = "CreateCereal")]
     public IActionResult Create(CerealData data)
     {
@@ -59,6 +61,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPut(Name = "UpdateCereal")]
     public IActionResult Update(CerealData data)
     {
@@ -73,6 +76,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpDelete("{id}", Name = "DeleteCereal")]
     public IActionResult Delete(int id)
     {
