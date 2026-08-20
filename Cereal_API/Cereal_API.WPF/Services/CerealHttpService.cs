@@ -4,7 +4,7 @@ using System.Net.Http.Json;
 
 namespace Cereal_API.WPF.Services;
 
-public class CerealApiService(HttpClient httpClient)
+public class CerealHttpService(HttpClient httpClient)
 {
     private readonly HttpClient client = httpClient;
 

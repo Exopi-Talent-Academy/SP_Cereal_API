@@ -5,7 +5,7 @@ using System.Net;
 namespace Cereal_API.Tests.WPFTests;
 
 [TestClass]
-public class CerealApiServiceTests
+public class CerealHttpServiceTests
 {
     private const string baseUrl = "http://localhost/";
 
@@ -30,7 +30,7 @@ public class CerealApiServiceTests
 
         var handler = FakeHttpMessageHandler.CreateFakeMessageHandlerFor(cereals);
         var client = CreateClient(handler);
-        var service = new CerealApiService(client);
+        var service = new CerealHttpService(client);
 
         // Act
         var actual = await service.GetAllCereals();
@@ -38,7 +38,7 @@ public class CerealApiServiceTests
         //Assert
         Assert.HasCount(3, actual);
         Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
-        Assert.AreEqual(baseUrl + CerealApiService.URL, handler.Request.RequestUri!.ToString());
+        Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
     }
 
     [TestMethod]
@@ -50,7 +50,7 @@ public class CerealApiServiceTests
 
         var handler = FakeHttpMessageHandler.CreateFakeMessageHandlerFor(cereal);
         var client = CreateClient(handler);
-        var service = new CerealApiService(client);
+        var service = new CerealHttpService(client);
 
         // Act
         var actual = await service.GetCereal(expectedId);
@@ -59,7 +59,7 @@ public class CerealApiServiceTests
         Assert.AreEqual(cereal.Id, actual.Id);
         Assert.AreEqual(cereal.Name, actual.Name);
         Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
-        Assert.AreEqual(baseUrl + CerealApiService.URL_ID(expectedId), handler.Request.RequestUri!.ToString());
+        Assert.AreEqual(baseUrl + CerealHttpService.URL_ID(expectedId), handler.Request.RequestUri!.ToString());
     }
 
     [TestMethod]
@@ -71,7 +71,7 @@ public class CerealApiServiceTests
 
         var handler = FakeHttpMessageHandler.CreateFakeMessageHandlerFor(image);
         var client = CreateClient(handler);
-        var service = new CerealApiService(client);
+        var service = new CerealHttpService(client);
 
         // Act
         var actual = await service.GetCerealImage(id);
@@ -79,7 +79,7 @@ public class CerealApiServiceTests
         //Assert
         Assert.HasCount(image.Length, actual);
         Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
-        Assert.AreEqual(baseUrl + CerealApiService.URL_ID_IMAGE(id), handler.Request.RequestUri!.ToString());
+        Assert.AreEqual(baseUrl + CerealHttpService.URL_ID_IMAGE(id), handler.Request.RequestUri!.ToString());
     }
 
     [TestMethod]
@@ -91,14 +91,14 @@ public class CerealApiServiceTests
 
         var handler = FakeHttpMessageHandler.CreateFakeMessageHandler();
         var client = CreateClient(handler);
-        var service = new CerealApiService(client);
+        var service = new CerealHttpService(client);
 
         // Act
         await service.CreateCereal(cereal);
 
         //Assert
         Assert.AreEqual(HttpMethod.Post, handler.Request!.Method);
-        Assert.AreEqual(baseUrl + CerealApiService.URL, handler.Request.RequestUri!.ToString());
+        Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
         
         var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
         Assert.Contains(expectedName, json);
@@ -113,14 +113,14 @@ public class CerealApiServiceTests
 
         var handler = FakeHttpMessageHandler.CreateFakeMessageHandler();
         var client = CreateClient(handler);
-        var service = new CerealApiService(client);
+        var service = new CerealHttpService(client);
 
         // Act
         await service.UpdateCereal(cereal);
 
         //Assert
         Assert.AreEqual(HttpMethod.Put, handler.Request!.Method);
-        Assert.AreEqual(baseUrl + CerealApiService.URL, handler.Request.RequestUri!.ToString());
+        Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
 
         var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
         Assert.Contains(expectedName, json);
@@ -134,13 +134,13 @@ public class CerealApiServiceTests
 
         var handler = FakeHttpMessageHandler.CreateFakeMessageHandler(HttpStatusCode.NoContent);
         var client = CreateClient(handler);
-        var service = new CerealApiService(client);
+        var service = new CerealHttpService(client);
 
         // Act
         await service.DeleteCereal(id);
 
         //Assert
         Assert.AreEqual(HttpMethod.Delete, handler.Request!.Method);
-        Assert.AreEqual(baseUrl + CerealApiService.URL_ID(id), handler.Request.RequestUri!.ToString());
+        Assert.AreEqual(baseUrl + CerealHttpService.URL_ID(id), handler.Request.RequestUri!.ToString());
     }
 }

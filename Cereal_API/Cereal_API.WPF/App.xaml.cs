@@ -20,7 +20,7 @@ public partial class App : Application
             BaseAddress = new Uri(cerealApiBaseAddress)
         });
 
-        services.AddSingleton<CerealApiService>();
+        services.AddSingleton<CerealHttpService>();
         services.AddSingleton<MainWindow>();
 
         Services = services.BuildServiceProvider();

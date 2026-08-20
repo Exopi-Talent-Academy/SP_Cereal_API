@@ -5,9 +5,9 @@ namespace Cereal_API.WPF;
 
 public partial class MainWindow : Window
 {
-    private readonly CerealApiService _api;
+    private readonly CerealHttpService _api;
 
-    public MainWindow(CerealApiService api)
+    public MainWindow(CerealHttpService api)
     {
         InitializeComponent();
 
