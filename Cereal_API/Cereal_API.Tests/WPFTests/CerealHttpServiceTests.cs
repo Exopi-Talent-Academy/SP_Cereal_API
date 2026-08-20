@@ -91,6 +91,7 @@ public class CerealHttpServiceTests
         // Arrange
         var id = 1;
         var cereal = new CerealData { Id = id, Name = "A" };
+        var emptyCereal = new CerealData();
 
         var handler = FakeHttpMessageHandler.CreateFor(cereal, HttpStatusCode.NotFound);
         var client = CreateClient(handler);
@@ -100,7 +101,8 @@ public class CerealHttpServiceTests
         var actual = await service.GetCereal(id);
 
         // Assert
-        Assert.AreEqual(new(), actual);
+        Assert.AreEqual(emptyCereal.Id, actual.Id);
+        Assert.AreEqual(emptyCereal.Name, actual.Name);
     }
 
     [TestMethod]
