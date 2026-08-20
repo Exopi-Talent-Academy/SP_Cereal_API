@@ -1,5 +1,6 @@
 ﻿using Cereal_API.Shared.Models;
 using Cereal_API.WPF.Services;
+using System.Net;
 
 namespace Cereal_API.Tests.WPFTests;
 
@@ -17,7 +18,7 @@ public class CerealApiServiceTests
     }
 
     [TestMethod]
-    public async Task GetAllCereals_ReturnsGETRequestAndURL()   // 404/500 handling?
+    public async Task GetAllCereals_ReturnsCerealsAndGETRequest()   // 404/500 handling?
     {
         // Arrange
         var cereals = new List<CerealData>
@@ -41,7 +42,7 @@ public class CerealApiServiceTests
     }
 
     [TestMethod]
-    public async Task GetCereal_ReturnsGETRequestAndURL()   // 404 handling?
+    public async Task GetCereal_ReturnsCerealAndGETRequest()   // 404 handling?
     {
         // Arrange
         var expectedId = 1;
@@ -62,26 +63,84 @@ public class CerealApiServiceTests
     }
 
     [TestMethod]
-    public async Task GetCerealImage_ReturnsGETRequestAndBytes()    // 404 handling?
+    public async Task GetCerealImage_ReturnsBytesAndGETRequest()    // 404 handling?
     {
-        throw new NotImplementedException();
+        // Arrange
+        var id = 1;
+        byte[] image = [1, 2, 3, 4, 5];
+
+        var handler = FakeHttpMessageHandler.CreateFakeMessageHandlerFor(image);
+        var client = CreateClient(handler);
+        var service = new CerealApiService(client);
+
+        // Act
+        var actual = await service.GetCerealImage(id);
+
+        //Assert
+        Assert.HasCount(image.Length, actual);
+        Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
+        Assert.AreEqual(baseUrl + CerealApiService.URL_ID_IMAGE(id), handler.Request.RequestUri!.ToString());
     }
 
     [TestMethod]
-    public async Task CreateCereal_ReturnsPOSTRequestAndSucceeds(CerealData cereal) // 400 handling?
+    public async Task CreateCereal_ReturnsPOSTRequestAndJSONBody() // 400 handling?
     {
-        throw new NotImplementedException();
+        // Arrange
+        var expectedName = "A Very Long And Convoluted Name";
+        var cereal = new CerealData { Id = 0, Name = expectedName };
+
+        var handler = FakeHttpMessageHandler.CreateFakeMessageHandler();
+        var client = CreateClient(handler);
+        var service = new CerealApiService(client);
+
+        // Act
+        await service.CreateCereal(cereal);
+
+        //Assert
+        Assert.AreEqual(HttpMethod.Post, handler.Request!.Method);
+        Assert.AreEqual(baseUrl + CerealApiService.URL, handler.Request.RequestUri!.ToString());
+        
+        var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
+        Assert.Contains(expectedName, json);
     }
 
     [TestMethod]
-    public async Task UpdateCereal_ReturnsPUTRequestAndSucceeds(CerealData cereal)  // 404 handling?
+    public async Task UpdateCereal_ReturnsPUTRequestAndJSONBody()  // 404 handling?
     {
-        throw new NotImplementedException();
+        // Arrange
+        var expectedName = "A Very Long And Convoluted Name";
+        var cereal = new CerealData { Id = 1, Name = expectedName };
+
+        var handler = FakeHttpMessageHandler.CreateFakeMessageHandler();
+        var client = CreateClient(handler);
+        var service = new CerealApiService(client);
+
+        // Act
+        await service.UpdateCereal(cereal);
+
+        //Assert
+        Assert.AreEqual(HttpMethod.Put, handler.Request!.Method);
+        Assert.AreEqual(baseUrl + CerealApiService.URL, handler.Request.RequestUri!.ToString());
+
+        var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
+        Assert.Contains(expectedName, json);
     }
 
     [TestMethod]
     public async Task DeleteCereal_ReturnsDELETERequestAndSucceeds()    // 404 handling?
     {
-        throw new NotImplementedException();
+        // Arrange
+        var id = 1;
+
+        var handler = FakeHttpMessageHandler.CreateFakeMessageHandler(HttpStatusCode.NoContent);
+        var client = CreateClient(handler);
+        var service = new CerealApiService(client);
+
+        // Act
+        await service.DeleteCereal(id);
+
+        //Assert
+        Assert.AreEqual(HttpMethod.Delete, handler.Request!.Method);
+        Assert.AreEqual(baseUrl + CerealApiService.URL_ID(id), handler.Request.RequestUri!.ToString());
     }
 }
