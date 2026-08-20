@@ -9,6 +9,13 @@ namespace Cereal_API.API.Controllers;
 [Route("api/cereal")]
 public class CerealController(ICerealService cerealService) : ControllerBase
 {
+    [Authorize]
+    [HttpGet("auth/check", Name = "AuthorizationCheck")]
+    public IActionResult AuthorizationCheck()
+    {
+        return Ok();
+    }
+
     [HttpGet(Name = "GetAllCereals")]
     public IActionResult GetAll()
     {

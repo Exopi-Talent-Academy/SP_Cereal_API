@@ -1,7 +1,9 @@
 ﻿using Cereal_API.Shared;
 using Cereal_API.Shared.Models;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text;
 
 namespace Cereal_API.WPF.Services;
 
@@ -10,11 +12,23 @@ public class CerealHttpService(HttpClient httpClient)
     private readonly HttpClient client = httpClient;
 
     public const string URL = "cerealapi";
+    public const string URL_LOGIN_CHECK = $"{URL}/auth/check";
     public static string URL_ID(int id) => $"{URL}/{id}";
     public static string URL_ID_IMAGE(int id) => $"{URL_ID(id)}/image";
 
-    //var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
-    //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+    public async Task<bool> Login(string username, string password)
+    {
+        var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
+
+        using var response = await client.GetAsync(URL_LOGIN_CHECK);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task Logout()
+    {
+        client.DefaultRequestHeaders.Authorization = null;
+    }
 
     public async Task<List<CerealData>> GetAllCereals()
     {

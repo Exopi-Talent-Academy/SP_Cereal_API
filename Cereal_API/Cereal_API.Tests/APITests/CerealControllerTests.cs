@@ -10,6 +10,20 @@ namespace Cereal_API.Tests.APITests;
 public class CerealControllerTests
 {
     [TestMethod]
+    public void AuthorizationCheck_ReturnsOK()
+    {
+        // Arrange
+        var service = new Mock<ICerealService>();
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.AuthorizationCheck();
+
+        // Assert
+        Assert.IsInstanceOfType<OkResult>(actual);
+    }
+
+    [TestMethod]
     public void GetAll_ReturnsOkWithCereals()
     {
         // Arrange

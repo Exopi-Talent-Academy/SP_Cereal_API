@@ -2,6 +2,7 @@
 using Cereal_API.Tests.Helper;
 using Cereal_API.WPF.Services;
 using System.Net;
+using System.Text;
 
 namespace Cereal_API.Tests.WPFTests;
 
@@ -16,6 +17,75 @@ public class CerealHttpServiceTests
         {
             BaseAddress = new Uri(baseUrl)
         };
+    }
+
+    [TestMethod]
+    public async Task Login_Authorized_ReturnsTrue()
+    {
+        // Arrange
+        var username = "admin";
+        var password = "password";
+        var handler = FakeHttpMessageHandler.Create();
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        var actual = await service.Login(username, password);
+
+        // Assert
+        Assert.IsTrue(actual);
+        Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
+        Assert.AreEqual(baseUrl + CerealHttpService.URL_LOGIN_CHECK, handler.Request.RequestUri!.ToString());
+    }
+
+    [TestMethod]
+    public async Task Login_Unauthorized_ReturnsFalse()
+    {
+        // Arrange
+        var handler = FakeHttpMessageHandler.Create(HttpStatusCode.Unauthorized);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        var actual = await service.Login("admin", "password");
+
+        // Assert
+        Assert.IsFalse(actual);
+    }
+
+    [TestMethod]
+    public async Task Login_Authorized_ValidAuthorization()
+    {
+        // Arrange
+        var username = "admin";
+        var password = "password";
+        var handler = FakeHttpMessageHandler.Create();
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        await service.Login(username, password);
+
+        // Assert
+        Assert.IsNotNull(client.DefaultRequestHeaders.Authorization);
+        Assert.AreEqual("Basic", client.DefaultRequestHeaders.Authorization!.Scheme);
+        var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(client.DefaultRequestHeaders.Authorization.Parameter!));
+        Assert.AreEqual($"{username}:{password}", decoded);
+    }
+
+    [TestMethod]
+    public async Task Logout_NullAuthorization()
+    {
+        // Arrange
+        var handler = FakeHttpMessageHandler.Create();
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        await service.Logout();
+
+        // Assert
+        Assert.IsNull(client.DefaultRequestHeaders.Authorization);
     }
 
     [TestMethod]
