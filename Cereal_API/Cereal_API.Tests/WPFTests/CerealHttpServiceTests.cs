@@ -19,7 +19,7 @@ public class CerealHttpServiceTests
     }
 
     [TestMethod]
-    public async Task GetAllCereals_ReturnsCerealsAndGETRequest()   // 404/500 handling?
+    public async Task GetAllCereals_GETRequest_ReturnsCereals()
     {
         // Arrange
         var cereals = new List<CerealData>
@@ -36,14 +36,36 @@ public class CerealHttpServiceTests
         // Act
         var actual = await service.GetAllCereals();
         
-        //Assert
-        Assert.HasCount(3, actual);
+        // Assert
+        Assert.HasCount(cereals.Count, actual);
         Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
     }
 
     [TestMethod]
-    public async Task GetCereal_ReturnsCerealAndGETRequest()   // 404 handling?
+    public async Task GetAllCereals_Exception_ReturnsEmptyList()
+    {
+        // Arrange
+        var cereals = new List<CerealData>
+        {
+            new() { Id = 1, Name = "A" },
+            new() { Id = 2, Name = "B" },
+            new() { Id = 3, Name = "C" }
+        };
+
+        var handler = FakeHttpMessageHandler.CreateFor(cereals, HttpStatusCode.NotFound);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        var actual = await service.GetAllCereals();
+
+        // Assert
+        Assert.IsEmpty(actual);
+    }
+
+    [TestMethod]
+    public async Task GetCereal_GETRequest_ReturnsCereal()
     {
         // Arrange
         var expectedId = 1;
@@ -56,7 +78,7 @@ public class CerealHttpServiceTests
         // Act
         var actual = await service.GetCereal(expectedId);
 
-        //Assert
+        // Assert
         Assert.AreEqual(cereal.Id, actual.Id);
         Assert.AreEqual(cereal.Name, actual.Name);
         Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
@@ -64,7 +86,25 @@ public class CerealHttpServiceTests
     }
 
     [TestMethod]
-    public async Task GetCerealImage_ReturnsBytesAndGETRequest()    // 404 handling?
+    public async Task GetCereal_Exception_ReturnsNewCereal()
+    {
+        // Arrange
+        var id = 1;
+        var cereal = new CerealData { Id = id, Name = "A" };
+
+        var handler = FakeHttpMessageHandler.CreateFor(cereal, HttpStatusCode.NotFound);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        var actual = await service.GetCereal(id);
+
+        // Assert
+        Assert.AreEqual(new(), actual);
+    }
+
+    [TestMethod]
+    public async Task GetCerealImage_GETRequest_ReturnsBytes()
     {
         // Arrange
         var id = 1;
@@ -77,18 +117,35 @@ public class CerealHttpServiceTests
         // Act
         var actual = await service.GetCerealImage(id);
 
-        //Assert
+        // Assert
         Assert.HasCount(image.Length, actual);
         Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL_ID_IMAGE(id), handler.Request.RequestUri!.ToString());
     }
 
     [TestMethod]
-    public async Task CreateCereal_ReturnsPOSTRequestAndJSONBody() // 400 handling?
+    public async Task GetCerealImage_Exception_ReturnsEmptyBytes()
     {
         // Arrange
-        var expectedName = "A Very Long And Convoluted Name";
-        var cereal = new CerealData { Id = 0, Name = expectedName };
+        var id = 1;
+        byte[] image = [1, 2, 3, 4, 5];
+
+        var handler = FakeHttpMessageHandler.CreateFor(image, HttpStatusCode.NotFound);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        var actual = await service.GetCerealImage(id);
+
+        // Assert
+        Assert.IsEmpty(actual);
+    }
+
+    [TestMethod]
+    public async Task CreateCereal_POSTRequest_ReturnsJSONBody()
+    {
+        // Arrange
+        var cereal = new CerealData { Id = 0, Name = "A Very Long And Convoluted Name" };
 
         var handler = FakeHttpMessageHandler.Create();
         var client = CreateClient(handler);
@@ -97,20 +154,33 @@ public class CerealHttpServiceTests
         // Act
         await service.CreateCereal(cereal);
 
-        //Assert
+        // Assert
         Assert.AreEqual(HttpMethod.Post, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
         
         var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
-        Assert.Contains(expectedName, json);
+        Assert.Contains(cereal.Name, json);
     }
 
     [TestMethod]
-    public async Task UpdateCereal_ReturnsPUTRequestAndJSONBody()  // 404 handling?
+    public async Task CreateCereal_Exception_ReturnsException()
     {
         // Arrange
-        var expectedName = "A Very Long And Convoluted Name";
-        var cereal = new CerealData { Id = 1, Name = expectedName };
+        var cereal = new CerealData { Id = 0, Name = "A" };
+
+        var handler = FakeHttpMessageHandler.Create(HttpStatusCode.BadRequest);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act & Assert
+        await Assert.ThrowsExactlyAsync<HttpRequestException>(() => service.CreateCereal(cereal));
+    }
+
+    [TestMethod]
+    public async Task UpdateCereal_PUTRequest_ReturnsJSONBody()
+    {
+        // Arrange
+        var cereal = new CerealData { Id = 1, Name = "A Very Long And Convoluted Name" };
 
         var handler = FakeHttpMessageHandler.Create();
         var client = CreateClient(handler);
@@ -119,16 +189,30 @@ public class CerealHttpServiceTests
         // Act
         await service.UpdateCereal(cereal);
 
-        //Assert
+        // Assert
         Assert.AreEqual(HttpMethod.Put, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
 
         var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
-        Assert.Contains(expectedName, json);
+        Assert.Contains(cereal.Name, json);
     }
 
     [TestMethod]
-    public async Task DeleteCereal_ReturnsDELETERequestAndSucceeds()    // 404 handling?
+    public async Task UpdateCereal_Exception_ReturnsException()
+    {
+        // Arrange
+        var cereal = new CerealData { Id = 1, Name = "A" };
+
+        var handler = FakeHttpMessageHandler.Create(HttpStatusCode.NotFound);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act & Assert
+        await Assert.ThrowsExactlyAsync<HttpRequestException>(() => service.UpdateCereal(cereal));
+    }
+
+    [TestMethod]
+    public async Task DeleteCereal_DELETERequest_ReturnsSucceeds()
     {
         // Arrange
         var id = 1;
@@ -140,8 +224,20 @@ public class CerealHttpServiceTests
         // Act
         await service.DeleteCereal(id);
 
-        //Assert
+        // Assert
         Assert.AreEqual(HttpMethod.Delete, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL_ID(id), handler.Request.RequestUri!.ToString());
+    }
+
+    [TestMethod]
+    public async Task DeleteCereal_Exception_ReturnsException()
+    {
+        // Arrange
+        var handler = FakeHttpMessageHandler.Create(HttpStatusCode.NotFound);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act & Assert
+        await Assert.ThrowsExactlyAsync<HttpRequestException>(() => service.DeleteCereal(1));
     }
 }
