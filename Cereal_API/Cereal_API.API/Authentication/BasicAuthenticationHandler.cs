@@ -24,9 +24,9 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        if (!Request.Headers.TryGetValue(HeaderNames.Authorization, out Microsoft.Extensions.Primitives.StringValues value))
+        if (!Request.Headers.TryGetValue(HeaderNames.Authorization, out var value))
         {
-            return Task.FromResult(AuthenticateResult.Fail("Missing Authorization Header"));
+            return Task.FromResult(AuthenticateResult.NoResult());
         }
 
         try
