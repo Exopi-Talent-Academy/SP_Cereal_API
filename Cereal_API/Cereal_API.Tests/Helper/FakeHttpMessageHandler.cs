@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text;
 
-namespace Cereal_API.Tests.WPFTests;
+namespace Cereal_API.Tests.Helper;
 
 internal class FakeHttpMessageHandler : HttpMessageHandler
 {
@@ -15,7 +15,7 @@ internal class FakeHttpMessageHandler : HttpMessageHandler
         return Task.FromResult(Response);
     }
 
-    public static FakeHttpMessageHandler CreateFakeMessageHandler(HttpStatusCode statusCode = HttpStatusCode.OK)
+    public static FakeHttpMessageHandler Create(HttpStatusCode statusCode = HttpStatusCode.OK)
     {
         return new FakeHttpMessageHandler
         {
@@ -23,7 +23,7 @@ internal class FakeHttpMessageHandler : HttpMessageHandler
         };
     }
 
-    public static FakeHttpMessageHandler CreateFakeMessageHandlerFor<T>(T responseObject, HttpStatusCode statusCode = HttpStatusCode.OK)
+    public static FakeHttpMessageHandler CreateFor<T>(T responseObject, HttpStatusCode statusCode = HttpStatusCode.OK)
     {
         if (responseObject is byte[])
         {

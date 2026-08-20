@@ -1,6 +1,7 @@
 ﻿using Cereal_API.API.Services;
 using Cereal_API.Shared;
 using Cereal_API.Shared.Models;
+using Cereal_API.Tests.Helper;
 
 namespace Cereal_API.Tests.APITests;
 
@@ -11,7 +12,7 @@ public sealed class CerealServiceTests
     public void GetAllCereals_ReturnsAllCereals()
     {
         // Arrange
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.AddRange(
             new CerealData { Id = 1, Name = "A" },
             new CerealData { Id = 2, Name = "B" },
@@ -36,7 +37,7 @@ public sealed class CerealServiceTests
         int expectedId = 15;
         string expectedName = "A";
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.Add(new CerealData { Id = expectedId, Name = expectedName });
         context.SaveChanges();
 
@@ -55,7 +56,7 @@ public sealed class CerealServiceTests
     public void GetCereal_InvalidId_ThrowsKeyNotFound()
     {
         // Arrange
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         var service = new CerealService(context);
 
         // Act & Assert
@@ -69,11 +70,11 @@ public sealed class CerealServiceTests
         int id = 1;
         string name = "Test";
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.Add(new CerealData { Id = id, Name = name });
         context.SaveChanges();
 
-        var service = new CerealService(context, DatabaseMockHelper.ImageFolderPath);
+        var service = new CerealService(context, FakeDbContext.ImageFolderPath);
 
         // Act
         var image = service.GetImage(id);
@@ -90,11 +91,11 @@ public sealed class CerealServiceTests
         int id = 1;
         string name = "A";
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.Add(new CerealData { Id = id, Name = name });
         context.SaveChanges();
 
-        var service = new CerealService(context, DatabaseMockHelper.ImageFolderPath);
+        var service = new CerealService(context, FakeDbContext.ImageFolderPath);
 
         // Act & Assert
         Assert.ThrowsExactly<FileNotFoundException>(() => service.GetImage(id));
@@ -104,10 +105,10 @@ public sealed class CerealServiceTests
     public void GetImage_InvalidId_ThrowsKeyNotFound()
     {
         // Arrange
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context, DatabaseMockHelper.ImageFolderPath);
+        var service = new CerealService(context, FakeDbContext.ImageFolderPath);
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.GetImage(1));
@@ -123,7 +124,7 @@ public sealed class CerealServiceTests
         string expectedName = "A";
         CerealData newCereal = new() { Id = id, Name = expectedName };
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.SaveChanges();
 
         var service = new CerealService(context);
@@ -149,7 +150,7 @@ public sealed class CerealServiceTests
         // Arrange
         CerealData newCereal = new() { Id = 0, Name = "A", Manufacturer = manufacturer, Type = type };
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.SaveChanges();
 
         var service = new CerealService(context);
@@ -167,7 +168,7 @@ public sealed class CerealServiceTests
         string updatedName = "Updated";
         CerealData newCereal = new() { Id = expectedId, Name = updatedName };
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.Add(new CerealData { Id = expectedId, Name = oldName });
         context.SaveChanges();
 
@@ -190,7 +191,7 @@ public sealed class CerealServiceTests
         // Arrange
         CerealData newCereal = new() { Id = 1, Name = "Updated" };
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.SaveChanges();
 
         var service = new CerealService(context);
@@ -205,7 +206,7 @@ public sealed class CerealServiceTests
         // Arrange
         int deletedId = 2;
 
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         context.AddRange(
             new CerealData { Id = 1, Name = "A" },
             new CerealData { Id = 2, Name = "B" },
@@ -232,7 +233,7 @@ public sealed class CerealServiceTests
     public void DeleteCereal_InvalidId_ThrowsKeyNotFound()
     {
         // Arrange
-        using var context = DatabaseMockHelper.CreateContext();
+        using var context = FakeDbContext.Create();
         var service = new CerealService(context);
 
         // Act & Assert

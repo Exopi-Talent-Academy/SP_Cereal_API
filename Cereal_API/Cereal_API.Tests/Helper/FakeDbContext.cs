@@ -1,11 +1,11 @@
 ﻿using Cereal_API.API.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cereal_API.Tests.APITests;
+namespace Cereal_API.Tests.Helper;
 
-public static class DatabaseMockHelper
+public static class FakeDbContext
 {
-    public static AppDbContext CreateContext()
+    public static AppDbContext Create()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
         return new AppDbContext(options);

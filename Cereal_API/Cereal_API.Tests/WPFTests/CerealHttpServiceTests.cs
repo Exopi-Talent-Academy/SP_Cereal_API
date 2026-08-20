@@ -1,4 +1,5 @@
 ﻿using Cereal_API.Shared.Models;
+using Cereal_API.Tests.Helper;
 using Cereal_API.WPF.Services;
 using System.Net;
 
@@ -28,7 +29,7 @@ public class CerealHttpServiceTests
             new() { Id = 3, Name = "C" }
         };
 
-        var handler = FakeHttpMessageHandler.CreateFakeMessageHandlerFor(cereals);
+        var handler = FakeHttpMessageHandler.CreateFor(cereals);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
@@ -48,7 +49,7 @@ public class CerealHttpServiceTests
         var expectedId = 1;
         var cereal = new CerealData { Id = expectedId, Name = "A" };
 
-        var handler = FakeHttpMessageHandler.CreateFakeMessageHandlerFor(cereal);
+        var handler = FakeHttpMessageHandler.CreateFor(cereal);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
@@ -69,7 +70,7 @@ public class CerealHttpServiceTests
         var id = 1;
         byte[] image = [1, 2, 3, 4, 5];
 
-        var handler = FakeHttpMessageHandler.CreateFakeMessageHandlerFor(image);
+        var handler = FakeHttpMessageHandler.CreateFor(image);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
@@ -89,7 +90,7 @@ public class CerealHttpServiceTests
         var expectedName = "A Very Long And Convoluted Name";
         var cereal = new CerealData { Id = 0, Name = expectedName };
 
-        var handler = FakeHttpMessageHandler.CreateFakeMessageHandler();
+        var handler = FakeHttpMessageHandler.Create();
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
@@ -111,7 +112,7 @@ public class CerealHttpServiceTests
         var expectedName = "A Very Long And Convoluted Name";
         var cereal = new CerealData { Id = 1, Name = expectedName };
 
-        var handler = FakeHttpMessageHandler.CreateFakeMessageHandler();
+        var handler = FakeHttpMessageHandler.Create();
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
@@ -132,7 +133,7 @@ public class CerealHttpServiceTests
         // Arrange
         var id = 1;
 
-        var handler = FakeHttpMessageHandler.CreateFakeMessageHandler(HttpStatusCode.NoContent);
+        var handler = FakeHttpMessageHandler.Create(HttpStatusCode.NoContent);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
