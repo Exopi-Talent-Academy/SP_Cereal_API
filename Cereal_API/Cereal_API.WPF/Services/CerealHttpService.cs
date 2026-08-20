@@ -1,4 +1,5 @@
-﻿using Cereal_API.Shared.Models;
+﻿using Cereal_API.Shared;
+using Cereal_API.Shared.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
 
@@ -17,43 +18,67 @@ public class CerealHttpService(HttpClient httpClient)
 
     public async Task<List<CerealData>> GetAllCereals()
     {
-        throw new NotImplementedException();
-        //var response = await client.GetAsync(URL);
-        //response.EnsureSuccessStatusCode();
+        try
+        {
+            using var response = await client.GetAsync(URL);
+            response.EnsureSuccessStatusCode();
 
-        //return await response.Content.ReadFromJsonAsync<List<CerealData>>() ?? [];
+            return await response.Content.ReadFromJsonAsync<List<CerealData>>() ?? [];
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.ReportException(nameof(GetAllCereals), ex);
+            return [];
+        }
     }
 
-    // GET
-    // var users = await client.GetFromJsonAsync<List<User>>(url);
     public async Task<CerealData> GetCereal(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using var response = await client.GetAsync(URL_ID(id));
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadFromJsonAsync<CerealData>() ?? new();
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.ReportException(nameof(GetCereal), ex);
+            return new();
+        }
     }
 
-    public async Task<byte[]> GetCerealImage(int id)    // Unsure if this is the right return type
+    public async Task<byte[]> GetCerealImage(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            using var response = await client.GetAsync(URL_ID_IMAGE(id));
+            response.EnsureSuccessStatusCode();
+
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+        catch (Exception ex)
+        {
+            DebugHelper.ReportException(nameof(GetCerealImage), ex);
+            return [];
+        }
     }
 
-    // POST
-    // await client.PostAsJsonAsync(url, user);
     public async Task CreateCereal(CerealData cereal)
     {
-        throw new NotImplementedException();
+        using var response = await client.PostAsJsonAsync(URL, cereal);
+        response.EnsureSuccessStatusCode();
     }
 
-    // PUT
-    // await client.PutAsJsonAsync(url, user);
     public async Task UpdateCereal(CerealData cereal)
     {
-        throw new NotImplementedException();
+        using var response = await client.PutAsJsonAsync(URL, cereal);
+        response.EnsureSuccessStatusCode();
     }
 
-    // DELETE
-    // await client.DeleteAsync(url);
     public async Task DeleteCereal(int id)
     {
-        throw new NotImplementedException();
+        using var response = await client.DeleteAsync(URL_ID(id));
+        response.EnsureSuccessStatusCode();
     }
 }
