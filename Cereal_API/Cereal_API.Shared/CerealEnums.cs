@@ -1,46 +1,44 @@
-﻿namespace Cereal_API.Shared;
+﻿using System.ComponentModel;
+
+namespace Cereal_API.Shared;
 
 public static class CerealEnums
 {
     public enum Manufacturer
     {
+        [Description("American Home Food Products")]
         A,
+        [Description("General Mills")]
         G,
+        [Description("Kelloggs")]
         K,
+        [Description("Nabisco")]
         N,
+        [Description("Post")]
         P,
+        [Description("Quaker Oats")]
         Q,
+        [Description("Ralston Purina")]
         R
-    }
-
-    public static string GetManuFacturerName(Manufacturer mfr)
-    {
-        return mfr switch
-        {
-            Manufacturer.A => "American Home Food Products",
-            Manufacturer.G => "General Mills",
-            Manufacturer.K => "Kelloggs",
-            Manufacturer.N => "Nabisco",
-            Manufacturer.P => "Post",
-            Manufacturer.Q => "Quaker Oats",
-            Manufacturer.R => "Ralston Purina",
-            _ => throw new Exception("Cereal Manufacturer not found!")
-        };
     }
 
     public enum Type
     {
+        [Description("Cold")]
         C,
+        [Description("Hot")]
         H
     }
 
-    public static string GetTypeName(Type type)
+    public static string GetDescription(this Enum value)
     {
-        return type switch
-        {
-            Type.C => "Cold",
-            Type.H => "Hot",
-            _ => throw new Exception("Cereal type not found!")
-        };
+        var field = value.GetType().GetField(value.ToString());
+
+        var attribute = field?
+            .GetCustomAttributes(typeof(DescriptionAttribute), false)
+            .Cast<DescriptionAttribute>()
+            .FirstOrDefault();
+
+        return attribute?.Description ?? value.ToString();
     }
 }

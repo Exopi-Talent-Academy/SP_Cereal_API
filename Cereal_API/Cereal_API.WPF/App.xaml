@@ -5,6 +5,7 @@
              xmlns:views="clr-namespace:Cereal_API.WPF.Views"
              xmlns:vm="clr-namespace:Cereal_API.WPF.ViewModels">
     <Application.Resources>
+        
 
         <!--<DataTemplate DataType="{x:Type vm:LoginViewModel}">
             <views:LoginView/>
