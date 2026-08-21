@@ -11,7 +11,7 @@ public class CerealHttpService(HttpClient httpClient)
 {
     private readonly HttpClient client = httpClient;
 
-    public const string URL = "cerealapi";
+    public const string URL = "api/cereal";
     public const string URL_LOGIN_CHECK = $"{URL}/auth/check";
     public static string URL_ID(int id) => $"{URL}/{id}";
     public static string URL_ID_IMAGE(int id) => $"{URL_ID(id)}/image";

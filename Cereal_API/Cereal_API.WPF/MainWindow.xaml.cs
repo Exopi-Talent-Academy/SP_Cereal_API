@@ -15,10 +15,9 @@ public partial class MainWindow : Window
         _api = api;
     }
 
-    private void GetAllCerealsButton_Click(object sender, RoutedEventArgs e)
+    private async void GetAllCerealsButton_Click(object sender, RoutedEventArgs e)
     {
-        // Still doesn't work!
-        var result = _api.GetAllCereals();
-        Trace.WriteLine(result.Result.Count);
+        var result = await _api.GetAllCereals();
+        Trace.WriteLine(result.Count);
     }
 }
