@@ -1,7 +1,8 @@
 ﻿using Cereal_API.WPF.Services;
+using Cereal_API.WPF.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 using System.Windows;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Cereal_API.WPF;
 
@@ -21,6 +22,13 @@ public partial class App : Application
         });
 
         services.AddSingleton<CerealHttpService>();
+
+        services.AddTransient<CerealDataTableViewModel>();
+        //services.AddTransient<LoginViewModel>();
+
+        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<INavigationService, NavigationService>();
+
         services.AddSingleton<MainWindow>();
 
         Services = services.BuildServiceProvider();
