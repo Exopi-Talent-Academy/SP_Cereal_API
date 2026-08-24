@@ -1,4 +1,5 @@
 ﻿using Cereal_API.Shared;
+using Cereal_API.WPF.Commands;
 using Cereal_API.WPF.Filters;
 using System.Collections;
 
@@ -61,7 +62,10 @@ public class ColumnFilterViewModel : ViewModelBase
 
     public IEnumerable? AvailableValues { get; }
 
+    public RelayCommand ClearFilterCommand { get; private set; }
+
     public bool IsActive => FilterValue != null && !string.IsNullOrWhiteSpace(FilterValue.ToString());
+    public bool UseComboBox => AvailableValues != null;
 
     public ColumnFilterViewModel(string propertyName, Type propertyType)
     {
@@ -84,5 +88,14 @@ public class ColumnFilterViewModel : ViewModelBase
             Type _ when propertyType == typeof(CerealEnums.Type) => Enum.GetValues<CerealEnums.Type>(),
             _ => null
         };
+
+        ClearFilterCommand = new RelayCommand(
+            execute: _ => _ = ClearFilter(),
+            canExecute: _ => true);
+    }
+
+    public async Task ClearFilter()
+    {
+        FilterValue = null;
     }
 }

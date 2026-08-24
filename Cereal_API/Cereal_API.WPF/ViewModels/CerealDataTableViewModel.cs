@@ -15,10 +15,31 @@ public class CerealDataTableViewModel : ViewModelBase
     private readonly CerealHttpService _api;
     //private readonly LoginViewModel _loginVM;
 
-    public RelayCommand LoadCerealsCommand {  get; private set; }
     public ObservableCollection<CerealData> AllCereals { get; private set; } = [];
     public ObservableCollection<CerealData> FilteredCereals { get; private set; } = [];
-    public ObservableCollection<ColumnFilterViewModel> ColumnFilters { get; private set; }
+
+    #region Columns
+    public ColumnHeaderViewModel IdColumn { get; private set; } = new ColumnHeaderViewModel("Id", typeof(int));
+    public ColumnHeaderViewModel NameColumn { get; private set; } = new ColumnHeaderViewModel("Name", typeof(string));
+    public ColumnHeaderViewModel ManufacturerColumn { get; private set; } = new ColumnHeaderViewModel("Manufacturer", typeof(CerealEnums.Manufacturer));
+    public ColumnHeaderViewModel TypeColumn { get; private set; } = new ColumnHeaderViewModel("Type", typeof(CerealEnums.Type));
+    public ColumnHeaderViewModel CaloriesColumn { get; private set; } = new ColumnHeaderViewModel("Calories", typeof(int));
+    public ColumnHeaderViewModel ProteinColumn { get; private set; } = new ColumnHeaderViewModel("Protein", typeof(int));
+    public ColumnHeaderViewModel FatColumn { get; private set; } = new ColumnHeaderViewModel("Fat", typeof(int));
+    public ColumnHeaderViewModel SodiumColumn { get; private set; } = new ColumnHeaderViewModel("Sodium", typeof(int));
+    public ColumnHeaderViewModel FiberColumn { get; private set; } = new ColumnHeaderViewModel("Fiber", typeof(float));
+    public ColumnHeaderViewModel CarboColumn { get; private set; } = new ColumnHeaderViewModel("Carbo", typeof(float));
+    public ColumnHeaderViewModel SugarsColumn { get; private set; } = new ColumnHeaderViewModel("Sugars", typeof(int));
+    public ColumnHeaderViewModel PotassColumn { get; private set; } = new ColumnHeaderViewModel("Potass", typeof(int));
+    public ColumnHeaderViewModel VitaminsColumn { get; private set; } = new ColumnHeaderViewModel("Vitamins", typeof(int));
+    public ColumnHeaderViewModel ShelfColumn { get; private set; } = new ColumnHeaderViewModel("Shelf", typeof(int));
+    public ColumnHeaderViewModel WeightColumn { get; private set; } = new ColumnHeaderViewModel("Weight", typeof(float));
+    public ColumnHeaderViewModel CupsColumn { get; private set; } = new ColumnHeaderViewModel("Cups", typeof(float));
+    public ColumnHeaderViewModel RatingColumn { get; private set; } = new ColumnHeaderViewModel("Rating", typeof(float));
+    #endregion
+    public ObservableCollection<ColumnHeaderViewModel> Columns { get; private set; }
+
+    public RelayCommand LoadCerealsCommand {  get; private set; }
 
     public CerealEnums.Manufacturer[] ManufacturerOptions { get; private set; }
 
@@ -29,30 +50,30 @@ public class CerealDataTableViewModel : ViewModelBase
 
         ManufacturerOptions = (CerealEnums.Manufacturer[])Enum.GetValues(typeof(CerealEnums.Manufacturer));
 
-        ColumnFilters =
+        Columns =
         [
-            new ColumnFilterViewModel("Id", typeof(int)),
-            new ColumnFilterViewModel("Name", typeof(string)),
-            new ColumnFilterViewModel("Manufacturer", typeof(CerealEnums.Manufacturer)),
-            new ColumnFilterViewModel("Type", typeof(CerealEnums.Type)),
-            new ColumnFilterViewModel("Calories", typeof(int)),
-            new ColumnFilterViewModel("Protein", typeof(int)),
-            new ColumnFilterViewModel("Fat", typeof(int)),
-            new ColumnFilterViewModel("Sodium", typeof(int)),
-            new ColumnFilterViewModel("Fiber", typeof(float)),
-            new ColumnFilterViewModel("Carbo", typeof(float)),
-            new ColumnFilterViewModel("Sugars", typeof(int)),
-            new ColumnFilterViewModel("Potass", typeof(int)),
-            new ColumnFilterViewModel("Vitamins", typeof(int)),
-            new ColumnFilterViewModel("Shelf", typeof(int)),
-            new ColumnFilterViewModel("Weight", typeof(float)),
-            new ColumnFilterViewModel("Cups", typeof(float)),
-            new ColumnFilterViewModel("Rating", typeof(float)),
+            IdColumn,
+            NameColumn,
+            ManufacturerColumn,
+            TypeColumn,
+            CaloriesColumn,
+            ProteinColumn,
+            FatColumn,
+            SodiumColumn,
+            FiberColumn,
+            CarboColumn,
+            SugarsColumn,
+            PotassColumn,
+            VitaminsColumn,
+            ShelfColumn,
+            WeightColumn,
+            CupsColumn,
+            RatingColumn
         ];
 
-        foreach (var filter in ColumnFilters)
+        foreach (var column in Columns)
         {
-            filter.PropertyChanged += FilterPropertyChanged;
+            column.Filter.PropertyChanged += FilterPropertyChanged;
         }
 
         LoadCerealsCommand = new RelayCommand(
@@ -87,9 +108,9 @@ public class CerealDataTableViewModel : ViewModelBase
 
         foreach(CerealData cereal in AllCereals)
         {
-            bool matches = ColumnFilters
-                .Where(filter => filter.IsActive)
-                .All(filter => CerealFilter.Matches(cereal, filter));
+            bool matches = Columns
+                .Where(c => c.Filter.IsActive)
+                .All(c => CerealFilter.Matches(cereal, c.Filter));
 
             if (matches)
             {

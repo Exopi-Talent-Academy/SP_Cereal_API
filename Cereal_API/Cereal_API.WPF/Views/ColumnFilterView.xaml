@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="Cereal_API.WPF.Views.ColumnFilterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Cereal_API.WPF.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="400">
+    
+    <Border BorderBrush="Black" 
+                BorderThickness="1"
+                Background="White"
+                Padding="0">
+
+        <StackPanel HorizontalAlignment="Left">
+
+            <Button Content="Clear Filter" 
+                    Command="{Binding ClearFilterCommand}"
+                    HorizontalAlignment="Left"
+                    Margin="2"/>
+            
+            <TextBox Text="{Binding FilterValue, UpdateSourceTrigger=PropertyChanged}"
+                     Visibility="{Binding UseComboBox, Converter={StaticResource InverseBoolToVisibility}}"
+                     Padding="2"/>
+
+            <ComboBox ItemsSource="{Binding AvailableValues}" 
+                  SelectedItem="{Binding FilterValue}"
+                  Visibility="{Binding UseComboBox, Converter={StaticResource BoolToVisibility}}"/>
+
+            <ComboBox ItemsSource="{Binding AvailableOperators}" 
+                  SelectedItem="{Binding SelectedOperator}"/>
+
+        </StackPanel>
+    </Border>
+</UserControl>

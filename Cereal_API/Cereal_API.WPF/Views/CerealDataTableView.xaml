@@ -7,37 +7,19 @@
              xmlns:shared="clr-namespace:Cereal_API.Shared;assembly=Cereal_API.Shared"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="0" Content="Load Cereals" Command="{Binding LoadCerealsCommand}"/>
-
-        <!--
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <TextBox Text="{Binding ColumnFilters[0].FilterValue, UpdateSourceTrigger=PropertyChanged}"
-                     Width="150"/>
-
-            <ComboBox ItemsSource="{Binding ColumnFilters[0].AvailableOperators}"
-                      SelectedItem="{Binding ColumnFilters[0].SelectedOperator}"
-                      Width="100"/>
-        </StackPanel>
-        -->
-
-        <!--
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <ComboBox ItemsSource="{Binding ColumnFilters[2].AvailableValues}"
-                      SelectedItem="{Binding ColumnFilters[2].FilterValue}"
-                      Width="150"/>
-
-            <ComboBox ItemsSource="{Binding ColumnFilters[2].AvailableOperators}"
-              SelectedItem="{Binding ColumnFilters[2].SelectedOperator}"
-              Width="100"/>
-        </StackPanel>
-        -->
+        <Button Grid.Row="0" 
+                Content="Load Cereals" 
+                Command="{Binding LoadCerealsCommand}"
+                HorizontalAlignment="Left"
+                Margin="2"/>
 
         <DataGrid Grid.Row="2" 
                   ItemsSource="{Binding FilteredCereals}" 
@@ -46,29 +28,111 @@
                   CanUserDeleteRows="True">
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" 
-                                    Binding="{Binding Id}" 
-                                    IsReadOnly="True"/>
-                
-                <DataGridTextColumn Header="Name" 
-                                    Binding="{Binding Name}"/>
-                
-                <DataGridComboBoxColumn Header="Manufacturer" 
-                                        SelectedValueBinding="{Binding Manufacturer}" 
-                                        ItemsSource="{Binding Source={x:Static shared:EnumProvider.Manufacturers}}"/>
-                
-                <DataGridComboBoxColumn Header="Type" 
-                                        SelectedValueBinding="{Binding Type}" 
-                                        ItemsSource="{Binding Source={x:Static shared:EnumProvider.Types}}"/>
-                
-                <DataGridTextColumn Header="Calories"
-                                    Binding="{Binding Calories}"/>
-                
-                <DataGridTextColumn Header="Protein"
-                                    Binding="{Binding Protein}"/>
-                
-                <!--Implement the rest!-->
-                
+                <DataGridTextColumn Binding="{Binding Id}" 
+                                    IsReadOnly="True">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.IdColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Name}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.NameColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridComboBoxColumn SelectedValueBinding="{Binding Manufacturer}" 
+                                        ItemsSource="{Binding Source={x:Static shared:EnumProvider.Manufacturers}}">
+                    <DataGridComboBoxColumn.Header>
+                        <ContentControl Content="{Binding DataContext.ManufacturerColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridComboBoxColumn.Header>
+                </DataGridComboBoxColumn>
+
+                <DataGridComboBoxColumn SelectedValueBinding="{Binding Type}" 
+                                        ItemsSource="{Binding Source={x:Static shared:EnumProvider.Types}}">
+                    <DataGridComboBoxColumn.Header>
+                        <ContentControl Content="{Binding DataContext.TypeColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridComboBoxColumn.Header>
+                </DataGridComboBoxColumn>
+
+                <DataGridTextColumn Binding="{Binding Calories}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.CaloriesColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Protein}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.ProteinColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Fat}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.FatColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Sodium}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.SodiumColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Fiber}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.FiberColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Carbo}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.CarboColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Sugars}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.SugarsColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Potass}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.PotassColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Vitamins}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.VitaminsColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Shelf}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.ShelfColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Weight}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.WeightColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Cups}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.CupsColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Binding="{Binding Rating}">
+                    <DataGridTextColumn.Header>
+                        <ContentControl Content="{Binding DataContext.RatingColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

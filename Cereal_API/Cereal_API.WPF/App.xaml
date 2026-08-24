@@ -17,5 +17,13 @@
             <views:CerealDataTableView/>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type vm:ColumnHeaderViewModel}">
+            <views:ColumnHeaderView/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type vm:ColumnFilterViewModel}">
+            <views:ColumnFilterView/>
+        </DataTemplate>
+
     </Application.Resources>
 </Application>
