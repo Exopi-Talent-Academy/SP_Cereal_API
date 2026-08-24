@@ -4,6 +4,7 @@ using Cereal_API.WPF.Commands;
 using Cereal_API.WPF.Filters;
 using Cereal_API.WPF.Services;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -15,9 +16,9 @@ public class CerealDataTableViewModel : ViewModelBase
     //private readonly LoginViewModel _loginVM;
 
     public RelayCommand LoadCerealsCommand {  get; private set; }
-    public ObservableCollection<CerealData> Cereals { get; private set; } = [];
+    public ObservableCollection<CerealData> AllCereals { get; private set; } = [];
     public ObservableCollection<CerealData> FilteredCereals { get; private set; } = [];
-    public ObservableCollection<FilterRule> Filters { get; private set; } = []; // Figure out how to assing this!
+    public ObservableCollection<ColumnFilterViewModel> ColumnFilters { get; private set; }
 
     public CerealEnums.Manufacturer[] ManufacturerOptions { get; private set; }
 
@@ -28,6 +29,32 @@ public class CerealDataTableViewModel : ViewModelBase
 
         ManufacturerOptions = (CerealEnums.Manufacturer[])Enum.GetValues(typeof(CerealEnums.Manufacturer));
 
+        ColumnFilters =
+        [
+            new ColumnFilterViewModel("Id", typeof(int)),
+            new ColumnFilterViewModel("Name", typeof(string)),
+            new ColumnFilterViewModel("Manufacturer", typeof(CerealEnums.Manufacturer)),
+            new ColumnFilterViewModel("Type", typeof(CerealEnums.Type)),
+            new ColumnFilterViewModel("Calories", typeof(int)),
+            new ColumnFilterViewModel("Protein", typeof(int)),
+            new ColumnFilterViewModel("Fat", typeof(int)),
+            new ColumnFilterViewModel("Sodium", typeof(int)),
+            new ColumnFilterViewModel("Fiber", typeof(float)),
+            new ColumnFilterViewModel("Carbo", typeof(float)),
+            new ColumnFilterViewModel("Sugars", typeof(int)),
+            new ColumnFilterViewModel("Potass", typeof(int)),
+            new ColumnFilterViewModel("Vitamins", typeof(int)),
+            new ColumnFilterViewModel("Shelf", typeof(int)),
+            new ColumnFilterViewModel("Weight", typeof(float)),
+            new ColumnFilterViewModel("Cups", typeof(float)),
+            new ColumnFilterViewModel("Rating", typeof(float)),
+        ];
+
+        foreach (var filter in ColumnFilters)
+        {
+            filter.PropertyChanged += FilterPropertyChanged;
+        }
+
         LoadCerealsCommand = new RelayCommand(
             execute: _ => _ = LoadCereals(),
             canExecute: _ => true);
@@ -35,29 +62,39 @@ public class CerealDataTableViewModel : ViewModelBase
 
     public async Task LoadCereals()
     {
-        Cereals.Clear();
+        AllCereals.Clear();
 
         foreach (CerealData cereal in await _api.GetAllCereals())
         {
-            Cereals.Add(cereal);
+            AllCereals.Add(cereal);
+        }
+
+        ApplyFilters();
+    }
+
+    private void FilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ColumnFilterViewModel.FilterValue) ||
+            e.PropertyName == nameof(ColumnFilterViewModel.SelectedOperator))
+        {
+            ApplyFilters();
         }
     }
 
-    /*public void OnFilterChanged()
+    public void ApplyFilters()
     {
         FilteredCereals.Clear();
 
-        foreach (var cereal in Cereals)
+        foreach(CerealData cereal in AllCereals)
         {
-            if (MatchesAllFilters(cereal))
-                FilteredCereals.Add(cereal);
-        }
-    }*/
+            bool matches = ColumnFilters
+                .Where(filter => filter.IsActive)
+                .All(filter => CerealFilter.Matches(cereal, filter));
 
-    /*public void MatchesAllFilters(CerealData data)
-    {
-        var value = typeof(CerealData)
-    .GetProperty(filter.PropertyName)!
-    .GetValue(cereal);
-    }*/
+            if (matches)
+            {
+                FilteredCereals.Add(cereal);
+            }
+        }
+    }
 }

@@ -10,16 +10,41 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <Button Grid.Row="0" Content="Load Cereals" Command="{Binding LoadCerealsCommand}"/>
 
-        <DataGrid Grid.Row="1" 
-                  ItemsSource="{Binding Cereals}" 
+        <!--
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBox Text="{Binding ColumnFilters[0].FilterValue, UpdateSourceTrigger=PropertyChanged}"
+                     Width="150"/>
+
+            <ComboBox ItemsSource="{Binding ColumnFilters[0].AvailableOperators}"
+                      SelectedItem="{Binding ColumnFilters[0].SelectedOperator}"
+                      Width="100"/>
+        </StackPanel>
+        -->
+
+        <!--
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <ComboBox ItemsSource="{Binding ColumnFilters[2].AvailableValues}"
+                      SelectedItem="{Binding ColumnFilters[2].FilterValue}"
+                      Width="150"/>
+
+            <ComboBox ItemsSource="{Binding ColumnFilters[2].AvailableOperators}"
+              SelectedItem="{Binding ColumnFilters[2].SelectedOperator}"
+              Width="100"/>
+        </StackPanel>
+        -->
+
+        <DataGrid Grid.Row="2" 
+                  ItemsSource="{Binding FilteredCereals}" 
                   AutoGenerateColumns="False" 
                   CanUserAddRows="True" 
                   CanUserDeleteRows="True">
+            
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" 
                                     Binding="{Binding Id}" 

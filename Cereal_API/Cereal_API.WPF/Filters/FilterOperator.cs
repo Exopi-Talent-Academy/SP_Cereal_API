@@ -5,7 +5,10 @@ public enum FilterOperator
     Equals,
     NotEquals,
     GreaterThan,
+    GreaterThanOrEqual,
     LessThan,
-    GreaterOrEqual,
-    LessOrEqual,
+    LessThanOrEqual,
+    Contains,
+    StartsWith,
+    EndsWith
 }
