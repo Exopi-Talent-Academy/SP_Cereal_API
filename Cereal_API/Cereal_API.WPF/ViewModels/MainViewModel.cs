@@ -2,21 +2,9 @@
 
 namespace Cereal_API.WPF.ViewModels;
 
-public class MainViewModel : ViewModelBase
+public class MainViewModel(LoginViewModel loginVM, CerealDataTableViewModel cerealDataTableVM) : ViewModelBase
 {
-    private readonly INavigationService _navigation;
+    public LoginViewModel LoginVM { get; } = loginVM;
 
-    public ViewModelBase? CurrentViewModel => _navigation.CurrentViewModel;
-
-    public MainViewModel(INavigationService navigation, CerealDataTableViewModel startViewModel)
-    {
-        _navigation = navigation;
-
-        _navigation.CurrentViewChanged += () =>
-        {
-            OnPropertyChanged(nameof(CurrentViewModel));
-        };
-
-        _navigation.Navigate(startViewModel);
-    }
+    public CerealDataTableViewModel CerealDataTableVM { get; } = cerealDataTableVM;
 }

@@ -27,7 +27,6 @@ public partial class App : Application
         services.AddTransient<LoginViewModel>();
 
         services.AddSingleton<MainViewModel>();
-        services.AddSingleton<INavigationService, NavigationService>();
 
         services.AddSingleton<MainWindow>();
 
