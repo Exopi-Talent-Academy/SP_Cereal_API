@@ -16,7 +16,17 @@ public class CerealDataTableViewModel : ViewModelBase
     //private readonly LoginViewModel _loginVM;
 
     public ObservableCollection<CerealData> AllCereals { get; private set; } = [];
-    public ObservableCollection<CerealData> FilteredCereals { get; private set; } = [];
+    
+    private ObservableCollection<CerealData> _filteredCereals = [];
+    public ObservableCollection<CerealData> FilteredCereals
+    {
+        get => _filteredCereals;
+        private set
+        {
+            _filteredCereals = value;
+            OnPropertyChanged();
+        }
+    }
 
     #region Columns
     public ColumnHeaderViewModel IdColumn { get; private set; } = new ColumnHeaderViewModel("Id", typeof(int));
@@ -42,6 +52,8 @@ public class CerealDataTableViewModel : ViewModelBase
     public RelayCommand LoadCerealsCommand {  get; private set; }
 
     public CerealEnums.Manufacturer[] ManufacturerOptions { get; private set; }
+
+    private CancellationTokenSource? _filterCancellation;
 
     public CerealDataTableViewModel(CerealHttpService api/*, LoginViewModel loginVM*/)
     {
@@ -83,39 +95,46 @@ public class CerealDataTableViewModel : ViewModelBase
 
     public async Task LoadCereals()
     {
-        AllCereals.Clear();
-
-        foreach (CerealData cereal in await _api.GetAllCereals())
-        {
-            AllCereals.Add(cereal);
-        }
+        AllCereals = new ObservableCollection<CerealData>(await _api.GetAllCereals());
 
         ApplyFilters();
     }
 
-    private void FilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private async void FilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(ColumnFilterViewModel.FilterValue) ||
             e.PropertyName == nameof(ColumnFilterViewModel.SelectedOperator))
         {
-            ApplyFilters();
+            _filterCancellation?.Cancel();
+            _filterCancellation?.Dispose();
+
+            _filterCancellation = new CancellationTokenSource();
+
+            try
+            {
+                await Task.Delay(300, _filterCancellation.Token);
+                ApplyFilters();
+            }
+            catch (TaskCanceledException)
+            {
+                // Ignore - another filter change occurred
+            }
         }
     }
 
     public void ApplyFilters()
     {
-        FilteredCereals.Clear();
+        var activeFilters = Columns
+            .Where(c => c.Filter.IsActive)
+            .Select(c => c.Filter)
+            .ToList();
 
-        foreach(CerealData cereal in AllCereals)
-        {
-            bool matches = Columns
-                .Where(c => c.Filter.IsActive)
-                .All(c => CerealFilter.Matches(cereal, c.Filter));
+        var results = AllCereals
+            .Where(cereal => 
+                activeFilters.All(filter => 
+                    CerealFilter.Matches(cereal, filter)))
+            .ToList();
 
-            if (matches)
-            {
-                FilteredCereals.Add(cereal);
-            }
-        }
+        FilteredCereals = new ObservableCollection<CerealData>(results);
     }
 }
