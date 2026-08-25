@@ -24,7 +24,7 @@ public partial class App : Application
         services.AddSingleton<CerealHttpService>();
 
         services.AddTransient<CerealDataTableViewModel>();
-        //services.AddTransient<LoginViewModel>();
+        services.AddTransient<LoginViewModel>();
 
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<INavigationService, NavigationService>();

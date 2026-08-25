@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Cereal_API.WPF.Views"
              xmlns:shared="clr-namespace:Cereal_API.Shared;assembly=Cereal_API.Shared"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="200" d:DesignWidth="800">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -15,17 +15,19 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="0" 
+        <local:LoginView Grid.Row="0"/>
+
+        <Button Grid.Row="1" 
                 Content="Load Cereals" 
-                Command="{Binding LoadCerealsCommand}"
-                HorizontalAlignment="Left"
-                Margin="2"/>
+                Command="{Binding LoadCerealsCommand}"/>
 
         <DataGrid Grid.Row="2" 
                   ItemsSource="{Binding FilteredCereals}" 
-                  AutoGenerateColumns="False" 
-                  CanUserAddRows="True" 
-                  CanUserDeleteRows="True">
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="True"
+                  CanUserDeleteRows="False"
+                  AddingNewItem="DataGrid_AddingNewItem"
+                  HorizontalAlignment="Left">
             
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" 

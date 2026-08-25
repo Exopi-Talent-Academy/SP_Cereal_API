@@ -91,6 +91,8 @@ public class CerealDataTableViewModel : ViewModelBase
         LoadCerealsCommand = new RelayCommand(
             execute: _ => _ = LoadCereals(),
             canExecute: _ => true);
+
+        _ = LoadCereals();
     }
 
     public async Task LoadCereals()
