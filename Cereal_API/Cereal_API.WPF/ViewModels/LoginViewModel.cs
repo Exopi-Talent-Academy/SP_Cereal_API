@@ -1,5 +1,4 @@
-﻿using Cereal_API.Shared;
-using Cereal_API.WPF.Commands;
+﻿using Cereal_API.WPF.Commands;
 using Cereal_API.WPF.Services;
 using System.Windows;
 
@@ -9,11 +8,47 @@ public class LoginViewModel : ViewModelBase
 {
     private readonly CerealHttpService _api;
 
-    public string Username { get; set; } = string.Empty;
+    private string _username = string.Empty;
+    public string Username
+    {
+        get => _username;
+        set
+        {
+            if (_username == value)
+                return;
 
-    public string Password { get; set; } = string.Empty;
+            _username = value;
+            OnPropertyChanged();
+        }
+    }
 
-    public bool IsLoggedIn { get; private set; } = false;
+    private string _password = string.Empty;
+    public string Password
+    {
+        get => _password;
+        set
+        {
+            if (_password == value)
+                return;
+
+            _password = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool _isLoggedIn;
+    public bool IsLoggedIn
+    {
+        get => _isLoggedIn;
+        private set
+        {
+            if (_isLoggedIn == value)
+                return;
+
+            _isLoggedIn = value;
+            OnPropertyChanged();
+        }
+    }
 
     public RelayCommand LoginCommand { get; set; }
 
@@ -34,11 +69,7 @@ public class LoginViewModel : ViewModelBase
 
     public async Task Login()
     {
-        DebugHelper.Report("Trying to login!");
-
         IsLoggedIn = await _api.Login(Username, Password);
-
-        DebugHelper.Report($"InLoggedIn = {IsLoggedIn}");
 
         if (!IsLoggedIn)
         {
@@ -48,9 +79,10 @@ public class LoginViewModel : ViewModelBase
 
     public async Task Logout()
     {
-        DebugHelper.Report("Trying to logout!");
-
         await _api.Logout();
+
+        Username = string.Empty;
+        Password = string.Empty;
         IsLoggedIn = false;
     }
 }

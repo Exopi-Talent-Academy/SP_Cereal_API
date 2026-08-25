@@ -11,7 +11,7 @@
 
         <StackPanel>
 
-            <Grid>
+            <Grid Visibility="{Binding IsLoggedIn, Converter={StaticResource InverseBoolToVisibility}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
