@@ -8,7 +8,7 @@ namespace Cereal_API.WPF;
 
 public partial class App : Application
 {
-    public const string cerealApiBaseAddress = "http://localhost:5068/";
+    public const string cerealApiBaseAddress = "https://localhost:7196/";
 
     public static IServiceProvider? Services { get; private set; }
 
