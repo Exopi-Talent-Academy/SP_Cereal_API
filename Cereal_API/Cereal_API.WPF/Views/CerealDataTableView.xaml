@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Cereal_API.WPF.Views"
              xmlns:shared="clr-namespace:Cereal_API.Shared;assembly=Cereal_API.Shared"
              mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="800">
+             d:DesignHeight="100" d:DesignWidth="400">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -14,20 +14,29 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button Grid.Row="0" 
-                Content="Load Cereals" 
-                Command="{Binding LoadCerealsCommand}"/>
+        <StackPanel Grid.Row="0" 
+                    Orientation="Horizontal">
+
+            <Button Content="Add Cereal"
+                    Command="{Binding AddCerealCommand}"/>
+
+            <Button Content="Load Cereals" 
+                    Command="{Binding LoadCerealsCommand}"/>
+
+        </StackPanel>
 
         <DataGrid Grid.Row="1" 
-                  ItemsSource="{Binding FilteredCereals}" 
+                  ItemsSource="{Binding FilteredCereals}"
+                  SelectedItem="{Binding SelectedCereal, Mode=TwoWay}"
+                  IsReadOnly="False"
                   AutoGenerateColumns="False"
-                  CanUserAddRows="True"
+                  CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   AddingNewItem="DataGrid_AddingNewItem"
                   HorizontalAlignment="Left">
             
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Id}" 
+                <DataGridTextColumn Binding="{Binding Cereal.Id}" 
                                     IsReadOnly="True">
                     <DataGridTextColumn.Header>
                         <ContentControl Content="{Binding DataContext.IdColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
@@ -131,6 +140,37 @@
                         <ContentControl Content="{Binding DataContext.RatingColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
+
+                <DataGridTemplateColumn Header="Actions">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+
+                            <StackPanel Orientation="Horizontal">
+
+                                <Button Content="Save" 
+                                        Command="{Binding DataContext.SaveCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding ShowSave, Converter={StaticResource BoolToVisibility}}"/>
+
+                                <Button Content="Cancel" 
+                                        Command="{Binding DataContext.CancelCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                        CommandParameter="{Binding}" 
+                                        Visibility="{Binding ShowSave, Converter={StaticResource BoolToVisibility}}"/>
+
+                                <Button Content="Update" 
+                                        Command="{Binding DataContext.UpdateCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding ShowUpdate, Converter={StaticResource BoolToVisibility}}"/>
+
+                                <Button Content="Delete"
+                                        Command="{Binding DataContext.DeleteCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding ShowSave, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
             </DataGrid.Columns>
         </DataGrid>

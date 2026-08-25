@@ -5,26 +5,41 @@ using Cereal_API.WPF.Filters;
 using Cereal_API.WPF.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Controls;
-using System.Windows.Input;
+using System.Net.Http;
 
 namespace Cereal_API.WPF.ViewModels;
 
 public class CerealDataTableViewModel : ViewModelBase
 {
     private readonly CerealHttpService _api;
-    //private readonly LoginViewModel _loginVM;
 
-    public ObservableCollection<CerealData> AllCereals { get; private set; } = [];
+    public ObservableCollection<CerealRowViewModel> AllCereals { get; private set; } = [];
     
-    private ObservableCollection<CerealData> _filteredCereals = [];
-    public ObservableCollection<CerealData> FilteredCereals
+    private ObservableCollection<CerealRowViewModel> _filteredCereals = [];
+    public ObservableCollection<CerealRowViewModel> FilteredCereals
     {
         get => _filteredCereals;
         private set
         {
             _filteredCereals = value;
             OnPropertyChanged();
+        }
+    }
+
+    private CerealRowViewModel? _selectedCereal;
+    public CerealRowViewModel? SelectedCereal   // This isn't used so it should probably be removed!
+    {
+        get => _selectedCereal;
+        set
+        {
+            if (_selectedCereal == value)
+                return;
+
+            _selectedCereal = value;
+            OnPropertyChanged();
+
+            UpdateCerealCommand.RaiseCanExecuteChanged();
+            DeleteCerealCommand.RaiseCanExecuteChanged();
         }
     }
 
@@ -50,15 +65,19 @@ public class CerealDataTableViewModel : ViewModelBase
     public ObservableCollection<ColumnHeaderViewModel> Columns { get; private set; }
 
     public RelayCommand LoadCerealsCommand {  get; private set; }
+    public RelayCommand AddCerealCommand { get; private set; }
+    public RelayCommand CancelCerealCommand { get; private set; }
+    public RelayCommand SaveCerealCommand { get; private set; }
+    public RelayCommand UpdateCerealCommand { get; private set; }
+    public RelayCommand DeleteCerealCommand { get; private set; }
 
     public CerealEnums.Manufacturer[] ManufacturerOptions { get; private set; }
 
     private CancellationTokenSource? _filterCancellation;
 
-    public CerealDataTableViewModel(CerealHttpService api/*, LoginViewModel loginVM*/)
+    public CerealDataTableViewModel(CerealHttpService api)
     {
         _api = api;
-        //_loginVM = loginVM;
 
         ManufacturerOptions = (CerealEnums.Manufacturer[])Enum.GetValues(typeof(CerealEnums.Manufacturer));
 
@@ -89,15 +108,100 @@ public class CerealDataTableViewModel : ViewModelBase
         }
 
         LoadCerealsCommand = new RelayCommand(
-            execute: _ => _ = LoadCereals(),
+            execute: _ => LoadCereals(),
             canExecute: _ => true);
 
-        _ = LoadCereals();
+        AddCerealCommand = new RelayCommand(
+            execute: _ => AddCereal(),
+            canExecute: _ => true);
+
+        CancelCerealCommand = new RelayCommand(
+            execute: parameter => CancelCereal((CerealRowViewModel)parameter!),
+            canExecute: parameter => parameter is CerealRowViewModel);
+
+        SaveCerealCommand = new RelayCommand(
+            execute: parameter => SaveCereal((CerealRowViewModel)parameter!),
+            canExecute: parameter => parameter is CerealRowViewModel);
+
+        UpdateCerealCommand = new RelayCommand(
+            execute: parameter => UpdateCereal((CerealRowViewModel)parameter!),
+            canExecute: parameter => parameter is CerealRowViewModel);
+
+        DeleteCerealCommand = new RelayCommand(
+            execute: parameter => DeleteCereal((CerealRowViewModel)parameter!),
+            canExecute: parameter => parameter is CerealRowViewModel);
+
+        LoadCereals();
     }
 
-    public async Task LoadCereals()
+    public async void AddCereal()
     {
-        AllCereals = new ObservableCollection<CerealData>(await _api.GetAllCereals());
+        var cereal = new CerealData();  // Should this add the ID as the newest?
+        var row = new CerealRowViewModel(cereal, true);
+
+        AllCereals.Add(row);
+
+        ApplyFilters();
+    }
+
+    public async void CancelCereal(CerealRowViewModel row)
+    {
+        AllCereals.Remove(row);
+        ApplyFilters();
+    }
+
+    private async void SaveCereal(CerealRowViewModel row)
+    {
+        try
+        {
+            await _api.CreateCereal(row.Cereal);
+
+            // Convert the row from "new" to normal
+            // and refresh the collection if necessary.
+        }
+        catch (HttpRequestException ex)
+        {
+            // Show error
+        }
+    }
+
+    private async void UpdateCereal(CerealRowViewModel row)
+    {
+        try
+        {
+            await _api.UpdateCereal(row.Cereal);
+
+            row.IsModified = false;
+        }
+        catch (HttpRequestException ex)
+        {
+            // Show error
+        }
+    }
+
+    private async void DeleteCereal(CerealRowViewModel row)
+    {
+        try
+        {
+            await _api.DeleteCereal(row.Cereal.Id);
+
+            AllCereals.Remove(row);
+            ApplyFilters();
+        }
+        catch (HttpRequestException ex)
+        {
+            // Show error
+        }
+    }
+
+    public async void LoadCereals()
+    {
+        AllCereals.Clear();
+
+        foreach (CerealData cereal in await _api.GetAllCereals())
+        {
+            AllCereals.Add(new CerealRowViewModel(cereal));
+        }
 
         ApplyFilters();
     }
@@ -132,11 +236,16 @@ public class CerealDataTableViewModel : ViewModelBase
             .ToList();
 
         var results = AllCereals
-            .Where(cereal => 
-                activeFilters.All(filter => 
-                    CerealFilter.Matches(cereal, filter)))
+            .Where(row =>
+                activeFilters.All(filter =>
+                    CerealFilter.Matches(row.Cereal, filter)))
             .ToList();
 
-        FilteredCereals = new ObservableCollection<CerealData>(results);
+        FilteredCereals.Clear();
+
+        foreach (var row in results)
+        {
+            FilteredCereals.Add(row);
+        }
     }
 }
