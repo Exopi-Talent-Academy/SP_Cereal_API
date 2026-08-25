@@ -27,6 +27,7 @@
 
         <Style TargetType="TextBox">
             <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="2"/>
         </Style>
 
         <Style TargetType="Button">
@@ -52,6 +53,11 @@
                     </Setter>
                 </Trigger>
             </Style.Triggers>
+        </Style>
+
+        <Style x:Key="LoginTextBlock" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
         </Style>
 
     </Application.Resources>

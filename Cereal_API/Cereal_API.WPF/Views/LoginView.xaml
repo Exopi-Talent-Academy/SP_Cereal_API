@@ -5,9 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Cereal_API.WPF.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="200">
+             d:DesignHeight="150" d:DesignWidth="200">
     
-    <Border BorderBrush="Black" BorderThickness="1" Padding="5">
+    <Border BorderBrush="Black" 
+            BorderThickness="1" 
+            HorizontalAlignment="Left" 
+            VerticalAlignment="Top"
+            Margin="2"
+            Padding="5">
 
         <StackPanel>
 
@@ -23,8 +28,8 @@
 
                 <TextBlock Grid.Row="0" 
                            Grid.Column="0" 
-                           Text="Username:" 
-                           FontWeight="Bold"/>
+                           Text="Username:"
+                           Style="{StaticResource LoginTextBlock}"/>
 
                 <TextBox Grid.Row="0" 
                          Grid.Column="1" 
@@ -33,8 +38,8 @@
                 <TextBlock Grid.Row="1" 
                            Grid.Column="0" 
                            Text="Password:" 
-                           FontWeight="Bold"/>
-
+                           Style="{StaticResource LoginTextBlock}"/>
+                
                 <TextBox Grid.Row="1" 
                          Grid.Column="1" 
                          Text="{Binding Password}"/>
