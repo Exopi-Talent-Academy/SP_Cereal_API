@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Cereal_API.WPF.Views"
              xmlns:shared="clr-namespace:Cereal_API.Shared;assembly=Cereal_API.Shared"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="400">
+             d:DesignHeight="100" d:DesignWidth="500">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -44,6 +44,16 @@
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
+                <DataGridTemplateColumn Header="Image">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Image}"
+                                   Width="50"
+                                   Height="50"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
                 <DataGridTextColumn Binding="{Binding Name}">
                     <DataGridTextColumn.Header>
                         <ContentControl Content="{Binding DataContext.NameColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
@@ -147,7 +157,8 @@
                         <DataTemplate>
 
                             <StackPanel Orientation="Horizontal"
-                                        Visibility="{Binding DataContext.IsLoggedIn, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BoolToVisibility}}">
+                                        Visibility="{Binding DataContext.IsLoggedIn, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BoolToVisibility}}"
+                                        VerticalAlignment="Top">
 
                                 <Button Content="Save" 
                                         Command="{Binding DataContext.SaveNewCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"

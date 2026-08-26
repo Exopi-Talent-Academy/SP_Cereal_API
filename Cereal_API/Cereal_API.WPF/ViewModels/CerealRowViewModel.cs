@@ -265,6 +265,8 @@ public class CerealRowViewModel : ViewModelBase
     }
     #endregion
 
+    public byte[] Image { get; private set; }
+
     public bool IsNew { get; set; }
 
     private bool _isModified;
@@ -288,9 +290,10 @@ public class CerealRowViewModel : ViewModelBase
     public bool ShowUpdate => !IsNew && IsModified;
     public bool ShowDelete => !IsNew && !IsModified;
 
-    public CerealRowViewModel(CerealData cereal, bool isNew = false)
+    public CerealRowViewModel(CerealData cereal, byte[] image, bool isNew = false)
     {
         Cereal = cereal;
+        Image = image;
         IsNew = isNew;
 
         Original = isNew ? new() : cereal.Clone();

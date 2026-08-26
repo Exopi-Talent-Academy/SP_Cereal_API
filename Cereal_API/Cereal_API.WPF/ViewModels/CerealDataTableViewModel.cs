@@ -146,10 +146,22 @@ public class CerealDataTableViewModel : ViewModelBase
         LoadCereals();
     }
 
+    private async void LoadCereals()
+    {
+        AllCereals.Clear();
+
+        foreach (CerealData cereal in await _api.GetAllCereals())
+        {
+            AllCereals.Add(new CerealRowViewModel(cereal, await _api.GetCerealImage(cereal.Id)));
+        }
+
+        ApplyFilters();
+    }
+
     private async void AddCereal()
     {
-        var cereal = new CerealData();  // Should this add the ID as the newest?
-        var row = new CerealRowViewModel(cereal, true);
+        var cereal = new CerealData();
+        var row = new CerealRowViewModel(cereal, [], true);
 
         AllCereals.Add(row);
         ApplyFilters();
@@ -210,18 +222,6 @@ public class CerealDataTableViewModel : ViewModelBase
         {
             MessageBoxHelper.ShowError(ex.Message);
         }
-    }
-
-    public async void LoadCereals()
-    {
-        AllCereals.Clear();
-
-        foreach (CerealData cereal in await _api.GetAllCereals())
-        {
-            AllCereals.Add(new CerealRowViewModel(cereal));
-        }
-
-        ApplyFilters();
     }
 
     private async void FilterPropertyChanged(object? sender, PropertyChangedEventArgs e)
