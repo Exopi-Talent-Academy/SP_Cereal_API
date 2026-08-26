@@ -1,12 +1,13 @@
-﻿using Cereal_API.WPF.Commands;
+using Cereal_API.WPF.Commands;
+using Cereal_API.WPF.Helpers;
 using Cereal_API.WPF.Services;
-using System.Windows;
 
 namespace Cereal_API.WPF.ViewModels;
 
 public class LoginViewModel : ViewModelBase
 {
     private readonly CerealHttpService _api;
+    private readonly AuthenticationState _authenticationState;
 
     private string _username = string.Empty;
     public string Username
@@ -36,27 +37,16 @@ public class LoginViewModel : ViewModelBase
         }
     }
 
-    private bool _isLoggedIn;
-    public bool IsLoggedIn
-    {
-        get => _isLoggedIn;
-        private set
-        {
-            if (_isLoggedIn == value)
-                return;
-
-            _isLoggedIn = value;
-            OnPropertyChanged();
-        }
-    }
+    public bool IsLoggedIn => _authenticationState.IsLoggedIn;
 
     public RelayCommand LoginCommand { get; set; }
 
     public RelayCommand LogoutCommand { get; set; }
 
-    public LoginViewModel(CerealHttpService api)
+    public LoginViewModel(CerealHttpService api, AuthenticationState authenticationState)
     {
         _api = api;
+        _authenticationState = authenticationState;
 
         LoginCommand = new RelayCommand(
             execute: _ => _ = Login(),
@@ -69,11 +59,12 @@ public class LoginViewModel : ViewModelBase
 
     public async Task Login()
     {
-        IsLoggedIn = await _api.Login(Username, Password);
+        _authenticationState.SetLoggedIn(await _api.Login(Username, Password));
+        OnPropertyChanged(nameof(IsLoggedIn));
 
-        if (!IsLoggedIn)
+        if (!_authenticationState.IsLoggedIn)
         {
-            MessageBox.Show("Invalid Username or Password!", "Login failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBoxHelper.ShowError("Invalid Username or Password!", "Failed!");
         }
     }
 
@@ -83,6 +74,7 @@ public class LoginViewModel : ViewModelBase
 
         Username = string.Empty;
         Password = string.Empty;
-        IsLoggedIn = false;
+        _authenticationState.SetLoggedIn(false);
+        OnPropertyChanged(nameof(IsLoggedIn));
     }
 }

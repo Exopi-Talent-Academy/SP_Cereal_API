@@ -23,6 +23,8 @@ public partial class App : Application
 
         services.AddSingleton<CerealHttpService>();
 
+        services.AddSingleton<AuthenticationState>();
+
         services.AddTransient<CerealDataTableViewModel>();
         services.AddTransient<LoginViewModel>();
 

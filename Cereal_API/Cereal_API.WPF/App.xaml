@@ -6,6 +6,7 @@
              xmlns:vm="clr-namespace:Cereal_API.WPF.ViewModels"
              xmlns:converters="clr-namespace:Cereal_API.WPF.Converters">
     <Application.Resources>
+        <converters:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
         <converters:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVisibility"/>
 

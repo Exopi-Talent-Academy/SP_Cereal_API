@@ -2,6 +2,7 @@
 using Cereal_API.Shared.Models;
 using Cereal_API.WPF.Commands;
 using Cereal_API.WPF.Filters;
+using Cereal_API.WPF.Helpers;
 using Cereal_API.WPF.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -12,6 +13,7 @@ namespace Cereal_API.WPF.ViewModels;
 public class CerealDataTableViewModel : ViewModelBase
 {
     private readonly CerealHttpService _api;
+    private readonly AuthenticationState _authenticationState;
 
     public ObservableCollection<CerealRowViewModel> AllCereals { get; private set; } = [];
     
@@ -38,7 +40,7 @@ public class CerealDataTableViewModel : ViewModelBase
             _selectedCereal = value;
             OnPropertyChanged();
 
-            UpdateCerealCommand.RaiseCanExecuteChanged();
+            UpdateModifiedCerealCommand.RaiseCanExecuteChanged();
             DeleteCerealCommand.RaiseCanExecuteChanged();
         }
     }
@@ -66,18 +68,24 @@ public class CerealDataTableViewModel : ViewModelBase
 
     public RelayCommand LoadCerealsCommand {  get; private set; }
     public RelayCommand AddCerealCommand { get; private set; }
-    public RelayCommand CancelCerealCommand { get; private set; }
-    public RelayCommand SaveCerealCommand { get; private set; }
-    public RelayCommand UpdateCerealCommand { get; private set; }
+    public RelayCommand SaveNewCerealCommand { get; private set; }
+    public RelayCommand CancelNewCerealCommand { get; private set; }
+    public RelayCommand UpdateModifiedCerealCommand { get; private set; }
+    public RelayCommand CancelModifiedCerealCommand { get; private set; }
     public RelayCommand DeleteCerealCommand { get; private set; }
 
     public CerealEnums.Manufacturer[] ManufacturerOptions { get; private set; }
 
+    public bool IsLoggedIn => _authenticationState.IsLoggedIn;
+
     private CancellationTokenSource? _filterCancellation;
 
-    public CerealDataTableViewModel(CerealHttpService api)
+    public CerealDataTableViewModel(CerealHttpService api, AuthenticationState authenticationState)
     {
         _api = api;
+        _authenticationState = authenticationState;
+
+        _authenticationState.PropertyChanged += AuthenticationState_PropertyChanged;
 
         ManufacturerOptions = (CerealEnums.Manufacturer[])Enum.GetValues(typeof(CerealEnums.Manufacturer));
 
@@ -115,16 +123,20 @@ public class CerealDataTableViewModel : ViewModelBase
             execute: _ => AddCereal(),
             canExecute: _ => true);
 
-        CancelCerealCommand = new RelayCommand(
-            execute: parameter => CancelCereal((CerealRowViewModel)parameter!),
+        SaveNewCerealCommand = new RelayCommand(
+            execute: parameter => SaveNewCereal((CerealRowViewModel)parameter!),
             canExecute: parameter => parameter is CerealRowViewModel);
 
-        SaveCerealCommand = new RelayCommand(
-            execute: parameter => SaveCereal((CerealRowViewModel)parameter!),
+        CancelNewCerealCommand = new RelayCommand(
+            execute: parameter => CancelNewCereal((CerealRowViewModel)parameter!),
             canExecute: parameter => parameter is CerealRowViewModel);
 
-        UpdateCerealCommand = new RelayCommand(
-            execute: parameter => UpdateCereal((CerealRowViewModel)parameter!),
+        UpdateModifiedCerealCommand = new RelayCommand(
+            execute: parameter => UpdateModifiedCereal((CerealRowViewModel)parameter!),
+            canExecute: parameter => parameter is CerealRowViewModel);
+
+        CancelModifiedCerealCommand = new RelayCommand(
+            execute: parameter => CancelModifiedCereal((CerealRowViewModel)parameter!),
             canExecute: parameter => parameter is CerealRowViewModel);
 
         DeleteCerealCommand = new RelayCommand(
@@ -134,49 +146,55 @@ public class CerealDataTableViewModel : ViewModelBase
         LoadCereals();
     }
 
-    public async void AddCereal()
+    private async void AddCereal()
     {
         var cereal = new CerealData();  // Should this add the ID as the newest?
         var row = new CerealRowViewModel(cereal, true);
 
         AllCereals.Add(row);
-
         ApplyFilters();
     }
 
-    public async void CancelCereal(CerealRowViewModel row)
-    {
-        AllCereals.Remove(row);
-        ApplyFilters();
-    }
-
-    private async void SaveCereal(CerealRowViewModel row)
+    private async void SaveNewCereal(CerealRowViewModel row)
     {
         try
         {
             await _api.CreateCereal(row.Cereal);
 
-            // Convert the row from "new" to normal
-            // and refresh the collection if necessary.
+            row.SaveNew(AllCereals.Max(c => c.Id) + 1); // The new ID isn't calculated correctly if the newest entry in the database was deleted!
+            ApplyFilters();
         }
         catch (HttpRequestException ex)
         {
-            // Show error
+            MessageBoxHelper.ShowError(ex.Message);
         }
     }
 
-    private async void UpdateCereal(CerealRowViewModel row)
+    private async void CancelNewCereal(CerealRowViewModel row)
+    {
+        AllCereals.Remove(row);
+        ApplyFilters();
+    }
+
+    private async void UpdateModifiedCereal(CerealRowViewModel row)
     {
         try
         {
             await _api.UpdateCereal(row.Cereal);
 
-            row.IsModified = false;
+            row.OverrideOriginal();
+            ApplyFilters();
         }
         catch (HttpRequestException ex)
         {
-            // Show error
+            MessageBoxHelper.ShowError(ex.Message);
         }
+    }
+
+    private async void CancelModifiedCereal(CerealRowViewModel row)
+    {
+        row.RevertToOriginal();
+        ApplyFilters();
     }
 
     private async void DeleteCereal(CerealRowViewModel row)
@@ -190,7 +208,7 @@ public class CerealDataTableViewModel : ViewModelBase
         }
         catch (HttpRequestException ex)
         {
-            // Show error
+            MessageBoxHelper.ShowError(ex.Message);
         }
     }
 
@@ -228,7 +246,7 @@ public class CerealDataTableViewModel : ViewModelBase
         }
     }
 
-    public void ApplyFilters()
+    private void ApplyFilters()
     {
         var activeFilters = Columns
             .Where(c => c.Filter.IsActive)
@@ -246,6 +264,14 @@ public class CerealDataTableViewModel : ViewModelBase
         foreach (var row in results)
         {
             FilteredCereals.Add(row);
+        }
+    }
+
+    private void AuthenticationState_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AuthenticationState.IsLoggedIn))
+        {
+            OnPropertyChanged(nameof(IsLoggedIn));
         }
     }
 }

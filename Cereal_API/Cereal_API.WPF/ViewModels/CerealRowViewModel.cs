@@ -1,4 +1,5 @@
 ﻿using Cereal_API.Shared;
+using Cereal_API.Shared.Extensions;
 using Cereal_API.Shared.Models;
 
 namespace Cereal_API.WPF.ViewModels;
@@ -6,8 +7,23 @@ namespace Cereal_API.WPF.ViewModels;
 public class CerealRowViewModel : ViewModelBase
 {
     public CerealData Cereal { get; }
+    private CerealData Original { get; }
 
     #region Cereal Data
+    public int Id
+    {
+        get => Cereal.Id;
+        set
+        {
+            if (Cereal.Id == value)
+                return;
+
+            Cereal.Id = value;
+
+            OnPropertyChanged();
+        }
+    }
+
     public string Name
     {
         get => Cereal.Name;
@@ -249,7 +265,7 @@ public class CerealRowViewModel : ViewModelBase
     }
     #endregion
 
-    public bool IsNew { get; }
+    public bool IsNew { get; set; }
 
     private bool _isModified;
 
@@ -264,21 +280,45 @@ public class CerealRowViewModel : ViewModelBase
             _isModified = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(ShowUpdate));
+            OnPropertyChanged(nameof(ShowDelete));
         }
     }
 
     public bool ShowSave => IsNew;
     public bool ShowUpdate => !IsNew && IsModified;
+    public bool ShowDelete => !IsNew && !IsModified;
 
     public CerealRowViewModel(CerealData cereal, bool isNew = false)
     {
         Cereal = cereal;
         IsNew = isNew;
+
+        Original = isNew ? new() : cereal.Clone();
+    }
+
+    public void SaveNew(int newID)
+    {
+        Id = newID;
+        IsNew = false;
+
+        OnPropertyChanged(nameof(ShowSave));
+        OverrideOriginal();
+    }
+
+    public void RevertToOriginal()
+    {
+        Cereal.SetValues(Original);
+        IsModified = false;
+    }
+
+    public void OverrideOriginal()
+    {
+        Original.SetValues(Cereal);
+        IsModified = false;
     }
 
     private void MakeModifiable()
     {
-        IsModified = true;
-        OnPropertyChanged(nameof(ShowUpdate));
+        IsModified = !Cereal.IsEqual(Original);
     }
 }

@@ -18,7 +18,8 @@
                     Orientation="Horizontal">
 
             <Button Content="Add Cereal"
-                    Command="{Binding AddCerealCommand}"/>
+                    Command="{Binding AddCerealCommand}"
+                    Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"/>
 
             <Button Content="Load Cereals" 
                     Command="{Binding LoadCerealsCommand}"/>
@@ -28,7 +29,7 @@
         <DataGrid Grid.Row="1" 
                   ItemsSource="{Binding FilteredCereals}"
                   SelectedItem="{Binding SelectedCereal, Mode=TwoWay}"
-                  IsReadOnly="False"
+                  IsReadOnly="{Binding IsLoggedIn, Converter={StaticResource InverseBooleanConverter}}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
@@ -36,7 +37,7 @@
                   HorizontalAlignment="Left">
             
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Cereal.Id}" 
+                <DataGridTextColumn Binding="{Binding Id}" 
                                     IsReadOnly="True">
                     <DataGridTextColumn.Header>
                         <ContentControl Content="{Binding DataContext.IdColumn, RelativeSource={RelativeSource AncestorType=DataGrid}}"/>
@@ -145,27 +146,33 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
 
-                            <StackPanel Orientation="Horizontal">
+                            <StackPanel Orientation="Horizontal"
+                                        Visibility="{Binding DataContext.IsLoggedIn, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BoolToVisibility}}">
 
                                 <Button Content="Save" 
-                                        Command="{Binding DataContext.SaveCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        Command="{Binding DataContext.SaveNewCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                         CommandParameter="{Binding}"
                                         Visibility="{Binding ShowSave, Converter={StaticResource BoolToVisibility}}"/>
 
                                 <Button Content="Cancel" 
-                                        Command="{Binding DataContext.CancelCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                        Command="{Binding DataContext.CancelNewCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
                                         CommandParameter="{Binding}" 
                                         Visibility="{Binding ShowSave, Converter={StaticResource BoolToVisibility}}"/>
 
                                 <Button Content="Update" 
-                                        Command="{Binding DataContext.UpdateCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        Command="{Binding DataContext.UpdateModifiedCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                         CommandParameter="{Binding}"
+                                        Visibility="{Binding ShowUpdate, Converter={StaticResource BoolToVisibility}}"/>
+
+                                <Button Content="Cancel" 
+                                        Command="{Binding DataContext.CancelModifiedCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                        CommandParameter="{Binding}" 
                                         Visibility="{Binding ShowUpdate, Converter={StaticResource BoolToVisibility}}"/>
 
                                 <Button Content="Delete"
                                         Command="{Binding DataContext.DeleteCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                         CommandParameter="{Binding}"
-                                        Visibility="{Binding ShowSave, Converter={StaticResource InverseBoolToVisibility}}"/>
+                                        Visibility="{Binding ShowDelete, Converter={StaticResource BoolToVisibility}}"/>
 
                             </StackPanel>
                         </DataTemplate>
