@@ -64,24 +64,26 @@ public sealed class CerealServiceTests
     }
 
     [TestMethod]
-    public void GetImage_ValidId_ReturnsImage()
+    [DataRow("JPG_Test", "image/jpeg")]
+    [DataRow("PNG_Test", "image/png")]
+    public void GetImage_ValidId_ReturnsImage(string fileName, string expectedContentType)
     {
         // Arrange
         int id = 1;
-        string name = "Test";
 
         using var context = FakeDbContext.Create();
-        context.Add(new CerealData { Id = id, Name = name });
+        context.Add(new CerealData { Id = id, Name = fileName });
         context.SaveChanges();
 
         var service = new CerealService(context, FakeDbContext.ImageFolderPath);
 
         // Act
-        var image = service.GetImage(id);
+        var (Data, ContentType) = service.GetImage(id);
 
         // Assert
-        Assert.IsNotNull(image);
-        Assert.IsNotEmpty(image);
+        Assert.IsNotNull(Data);
+        Assert.IsNotEmpty(Data);
+        Assert.AreEqual(expectedContentType, ContentType);
     }
 
     [TestMethod]

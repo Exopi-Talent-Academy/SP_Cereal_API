@@ -7,7 +7,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 {
     private readonly AppDbContext _db = db;
     private readonly string _imageFolder = imageFolder;
-    private const string imageExtension = ".jpg";
+    private readonly string[] imageExtensions = [".jpg", ".jpeg", ".png"];
 
     public List<CerealData> GetAllCereals()
     {
@@ -19,15 +19,25 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
         return _db.Cereals.FirstOrDefault(c => c.Id == id) ?? throw new KeyNotFoundException($"Cereal with id {id} not found");
     }
 
-    public byte[] GetImage(int id)
+    public (byte[] Data, string ContentType) GetImage(int id)
     {
         CerealData existingCereal = GetCereal(id);
 
-        string imagePath = Path.Combine(_imageFolder, existingCereal.Name + imageExtension);
+        string? imagePath = imageExtensions
+            .Select(extension => Path.Combine(_imageFolder, existingCereal.Name + extension))
+            .FirstOrDefault(File.Exists);
 
-        if (!File.Exists(imagePath)) throw new FileNotFoundException($"Cereal image \"{existingCereal.Name}\" with id {id} not found at path: {imagePath}", imagePath);
+        if (imagePath == null) 
+            throw new FileNotFoundException($"Cereal image \"{existingCereal.Name}\" with id {id} not found at path: {imagePath}", imagePath);
 
-        return File.ReadAllBytes(imagePath);
+        string contentType = Path.GetExtension(imagePath).ToLowerInvariant() switch
+        {
+            ".jpg" or ".jpeg" => "image/jpeg",
+            ".png" => "image/png",
+            _ => "application/octet-stream"
+        };
+
+        return (File.ReadAllBytes(imagePath), contentType);
     }
 
     public void CreateCereal(CerealData cereal)

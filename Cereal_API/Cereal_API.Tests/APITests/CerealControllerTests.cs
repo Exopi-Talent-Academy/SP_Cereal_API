@@ -89,9 +89,10 @@ public class CerealControllerTests
         // Arrange
         int id = 1;
         byte[] mockImage = [1, 2, 3, 4, 5];
+        string mockContentType = "image/jpeg";
 
         var service = new Mock<ICerealService>();
-        service.Setup(s => s.GetImage(id)).Returns(mockImage);
+        service.Setup(s => s.GetImage(id)).Returns((mockImage, mockContentType));
 
         var controller = new CerealController(service.Object);
 
@@ -100,10 +101,15 @@ public class CerealControllerTests
 
         // Assert
         Assert.IsInstanceOfType<FileContentResult>(actual);
+
         var image = (actual as FileContentResult)?.FileContents;
         Assert.IsNotNull(image);
         Assert.HasCount(5, image);
         Assert.AreEqual(mockImage, image);
+
+        var contentType = (actual as FileContentResult)?.ContentType;
+        Assert.IsNotNull(contentType);
+        Assert.AreEqual(mockContentType, contentType);
     }
 
     [TestMethod]

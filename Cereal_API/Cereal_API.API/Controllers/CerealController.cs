@@ -40,8 +40,8 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     {
         try
         {
-            byte[] image = cerealService.GetImage(id);
-            return File(image, "image/jpeg");
+            var (Data, ContentType) = cerealService.GetImage(id);
+            return File(Data, ContentType);
         }
         catch (FileNotFoundException)
         {
