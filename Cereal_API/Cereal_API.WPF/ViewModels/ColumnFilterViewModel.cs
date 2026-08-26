@@ -9,8 +9,6 @@ public class ColumnFilterViewModel : ViewModelBase
 {
     public static readonly FilterOperator[] textOperators =
     [
-        FilterOperator.Equals,
-        FilterOperator.NotEquals,
         FilterOperator.Contains,
         FilterOperator.StartsWith,
         FilterOperator.EndsWith
