@@ -10,7 +10,7 @@
     <StackPanel Orientation="Horizontal">
 
         <TextBlock Text="{Binding PropertyName}"
-                   FontWeight="Bold"/>
+                   Style="{StaticResource DataGridColumnHeaderTextBlock}"/>
 
         <ToggleButton x:Name="FilterButton" 
                       Content="{Binding FilterButtonText}"

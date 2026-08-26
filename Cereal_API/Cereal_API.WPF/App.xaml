@@ -61,5 +61,9 @@
             <Setter Property="FontWeight" Value="Bold"/>
         </Style>
 
+        <Style x:Key="DataGridColumnHeaderTextBlock" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
     </Application.Resources>
 </Application>

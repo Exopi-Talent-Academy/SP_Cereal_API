@@ -44,7 +44,12 @@
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn Header="Image">
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Image" 
+                                   Style="{StaticResource DataGridColumnHeaderTextBlock}"/>
+                    </DataGridTemplateColumn.Header>
+                    
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding Image}"
@@ -152,7 +157,12 @@
                     </DataGridTextColumn.Header>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn Header="Actions">
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Actions"
+                                   Style="{StaticResource DataGridColumnHeaderTextBlock}"/>
+                    </DataGridTemplateColumn.Header>
+                    
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
 
