@@ -1,15 +1,16 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Cereal_API.Shared;
 
 public static class DebugHelper
 {
-    public static void Report(string message)
+    public static void Report(string message, [CallerMemberName] string? methodName = null)
     {
-        Debug.WriteLine(message);
+        Debug.WriteLine($"{methodName} Debug: {message}");
     }
 
-    public static void ReportException(string methodName, Exception ex)
+    public static void ReportException(Exception ex, [CallerMemberName] string? methodName = null)
     {
         Report($"{methodName} threw the error: {ex.Message}");
     }

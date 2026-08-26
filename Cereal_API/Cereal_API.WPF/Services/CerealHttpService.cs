@@ -41,7 +41,7 @@ public class CerealHttpService(HttpClient httpClient)
         }
         catch (Exception ex)
         {
-            DebugHelper.ReportException(nameof(GetAllCereals), ex);
+            DebugHelper.ReportException(ex);
             return [];
         }
     }
@@ -57,7 +57,7 @@ public class CerealHttpService(HttpClient httpClient)
         }
         catch (Exception ex)
         {
-            DebugHelper.ReportException(nameof(GetCereal), ex);
+            DebugHelper.ReportException(ex);
             return new();
         }
     }
@@ -73,7 +73,7 @@ public class CerealHttpService(HttpClient httpClient)
         }
         catch (Exception ex)
         {
-            DebugHelper.ReportException(nameof(GetCerealImage), ex);
+            DebugHelper.ReportException(ex);
             return [];
         }
     }
