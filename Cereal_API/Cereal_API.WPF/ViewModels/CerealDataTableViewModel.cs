@@ -142,8 +142,6 @@ public class CerealDataTableViewModel : ViewModelBase
         DeleteCerealCommand = new RelayCommand(
             execute: parameter => DeleteCereal((CerealRowViewModel)parameter!),
             canExecute: parameter => parameter is CerealRowViewModel);
-
-        LoadCereals();
     }
 
     private async void LoadCereals()
