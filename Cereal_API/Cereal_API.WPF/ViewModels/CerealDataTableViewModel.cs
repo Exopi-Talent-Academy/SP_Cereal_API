@@ -146,6 +146,9 @@ public class CerealDataTableViewModel : ViewModelBase
 
     private async void LoadCereals()
     {
+        if (AllCereals.Any(x => x.IsModified || x.IsNew) && !MessageBoxHelper.ConfirmLoadCereals())
+            return;
+
         AllCereals.Clear();
 
         foreach (CerealData cereal in await _api.GetAllCereals())
@@ -167,6 +170,9 @@ public class CerealDataTableViewModel : ViewModelBase
 
     private async void SaveNewCereal(CerealRowViewModel row)
     {
+        if (!MessageBoxHelper.ConfirmSaveNewCereal())
+            return;
+
         try
         {
             await _api.CreateCereal(row.Cereal);
@@ -182,12 +188,18 @@ public class CerealDataTableViewModel : ViewModelBase
 
     private async void CancelNewCereal(CerealRowViewModel row)
     {
+        if (row.IsModified && !MessageBoxHelper.ConfirmCancelNewCereal())
+            return;
+
         AllCereals.Remove(row);
         ApplyFilters();
     }
 
     private async void UpdateModifiedCereal(CerealRowViewModel row)
     {
+        if (!MessageBoxHelper.ConfirmUpdateChanges(row.Cereal.Name))
+            return;
+
         try
         {
             await _api.UpdateCereal(row.Cereal);
@@ -203,12 +215,18 @@ public class CerealDataTableViewModel : ViewModelBase
 
     private async void CancelModifiedCereal(CerealRowViewModel row)
     {
+        if (!MessageBoxHelper.ConfirmCancelChanges(row.Cereal.Name))
+            return;
+
         row.RevertToOriginal();
         ApplyFilters();
     }
 
     private async void DeleteCereal(CerealRowViewModel row)
     {
+        if (!MessageBoxHelper.ConfirmDelete(row.Cereal.Name))
+            return;
+
         try
         {
             await _api.DeleteCereal(row.Cereal.Id);
