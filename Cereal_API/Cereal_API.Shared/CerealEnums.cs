@@ -6,28 +6,19 @@ public static class CerealEnums
 {
     public enum Manufacturer
     {
-        [Description("American Home Food Products")]
-        A,
-        [Description("General Mills")]
-        G,
-        [Description("Kelloggs")]
-        K,
-        [Description("Nabisco")]
-        N,
-        [Description("Post")]
-        P,
-        [Description("Quaker Oats")]
-        Q,
-        [Description("Ralston Purina")]
-        R
+        [Description("American Home Food Products")] A,
+        [Description("General Mills")] G,
+        [Description("Kelloggs")] K,
+        [Description("Nabisco")] N,
+        [Description("Post")] P,
+        [Description("Quaker Oats")] Q,
+        [Description("Ralston Purina")] R
     }
 
     public enum Type
     {
-        [Description("Cold")]
-        C,
-        [Description("Hot")]
-        H
+        [Description("Cold")] C,
+        [Description("Hot")] H
     }
 
     public static string GetDescription(this Enum value)
