@@ -1,6 +1,7 @@
-using Cereal_API.WPF.Commands;
+﻿using Cereal_API.WPF.Commands;
 using Cereal_API.WPF.Helpers;
 using Cereal_API.WPF.Services;
+using System.Windows.Controls;
 
 namespace Cereal_API.WPF.ViewModels;
 
@@ -23,20 +24,6 @@ public class LoginViewModel : ViewModelBase
         }
     }
 
-    private string _password = string.Empty;
-    public string Password
-    {
-        get => _password;
-        set
-        {
-            if (_password == value)
-                return;
-
-            _password = value;
-            OnPropertyChanged();
-        }
-    }
-
     public bool IsLoggedIn => _authenticationState.IsLoggedIn;
 
     public RelayCommand LoginCommand { get; set; }
@@ -49,17 +36,24 @@ public class LoginViewModel : ViewModelBase
         _authenticationState = authenticationState;
 
         LoginCommand = new RelayCommand(
-            execute: _ => _ = Login(),
+            execute: param => _ = Login(param),
             canExecute: _ => true);
 
         LogoutCommand = new RelayCommand(
-            execute: _ => _ = Logout(),
+            execute: param => _ = Logout(param),
             canExecute: _ => true);
     }
 
-    public async Task Login()
+    public async Task Login(object? parameter)
     {
-        _authenticationState.SetLoggedIn(await _api.Login(Username, Password));
+        string password = parameter switch
+        {
+            PasswordBox pb => pb.Password,
+            string s => s,
+            _ => string.Empty
+        };
+
+        _authenticationState.SetLoggedIn(await _api.Login(Username, password));
         OnPropertyChanged(nameof(IsLoggedIn));
 
         if (!_authenticationState.IsLoggedIn)
@@ -68,12 +62,16 @@ public class LoginViewModel : ViewModelBase
         }
     }
 
-    public async Task Logout()
+    public async Task Logout(object? parameter)
     {
         await _api.Logout();
 
         Username = string.Empty;
-        Password = string.Empty;
+        if (parameter is PasswordBox passwordBox)
+        {
+            passwordBox.Password = string.Empty;
+        }
+
         _authenticationState.SetLoggedIn(false);
         OnPropertyChanged(nameof(IsLoggedIn));
     }

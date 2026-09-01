@@ -40,18 +40,20 @@
                            Text="Password:" 
                            Style="{StaticResource LoginTextBlock}"/>
                 
-                <TextBox Grid.Row="1" 
-                         Grid.Column="1" 
-                         Text="{Binding Password}"/>
+                <PasswordBox x:Name="PasswordInput"
+                             Grid.Row="1"
+                             Grid.Column="1"/>
 
             </Grid>
 
             <Button Content="Login" 
                     Command="{Binding LoginCommand}"
+                    CommandParameter="{Binding ElementName=PasswordInput}"
                     Visibility="{Binding IsLoggedIn, Converter={StaticResource InverseBoolToVisibility}}"/>
 
             <Button Content="Logout" 
                     Command="{Binding LogoutCommand}"
+                    CommandParameter="{Binding ElementName=PasswordInput}"
                     Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"/>
 
         </StackPanel>
