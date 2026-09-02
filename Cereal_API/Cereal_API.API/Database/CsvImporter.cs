@@ -40,7 +40,8 @@ public static class CsvImporter
                     Shelf = int.Parse(values[12]),
                     Weight = float.Parse(values[13], CultureInfo.InvariantCulture),
                     Cups = float.Parse(values[14], CultureInfo.InvariantCulture),
-                    Rating = float.Parse(values[15], CultureInfo.InvariantCulture)
+                    Rating = float.Parse(values[15], CultureInfo.InvariantCulture),
+                    DbVersion = DateTime.UtcNow,
                 });
             }
             catch (Exception ex)

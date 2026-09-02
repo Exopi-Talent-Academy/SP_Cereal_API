@@ -1,4 +1,5 @@
 ﻿using Cereal_API.API.Database;
+using Cereal_API.Shared.Extensions;
 using Cereal_API.Shared.Models;
 
 namespace Cereal_API.API.Services;
@@ -46,6 +47,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
         if (!Enum.IsDefined(cereal.Type)) throw new ArgumentException("Invalid cereal type");
 
         cereal.Id = 0;
+        cereal.DbVersion = DateTime.UtcNow;
         _db.Cereals.Add(cereal);
         _db.SaveChanges();
     }
@@ -53,8 +55,14 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
     public void UpdateCereal(CerealData cereal)
     {
         CerealData existingCereal = GetCereal(cereal.Id);
-        if (existingCereal == cereal) return;
+        
+        if (existingCereal.DbVersion != cereal.DbVersion)
+            throw new InvalidOperationException();
 
+        if (existingCereal.IsEqual(cereal))
+            return;
+
+        cereal.DbVersion = DateTime.UtcNow;
         _db.Cereals.Entry(existingCereal).CurrentValues.SetValues(cereal);
         _db.SaveChanges();
     }

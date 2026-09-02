@@ -19,4 +19,5 @@ public class CerealData
     public float Weight { get; set; }
     public float Cups { get; set; }
     public float Rating { get; set; }
+    public DateTime? DbVersion { get; set; } = null;
 }

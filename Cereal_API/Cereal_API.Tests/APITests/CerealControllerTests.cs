@@ -219,6 +219,24 @@ public class CerealControllerTests
     }
 
     [TestMethod]
+    public void Update_ConcurrentUpdate_ReturnsConflict()
+    {
+        // Arrange
+        CerealData newCereal = new() { Id = 1, Name = "New" };
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.UpdateCereal(newCereal)).Throws<InvalidOperationException>();
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Update(newCereal);
+
+        // Assert
+        Assert.IsInstanceOfType<ConflictResult>(actual);
+    }
+
+    [TestMethod]
     public void Delete_ExistingId_ReturnsNoContent()
     {
         // Arrange

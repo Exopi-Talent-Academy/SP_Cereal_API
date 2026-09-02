@@ -6,6 +6,7 @@ using Cereal_API.WPF.Helpers;
 using Cereal_API.WPF.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Net;
 using System.Net.Http;
 
 namespace Cereal_API.WPF.ViewModels;
@@ -209,7 +210,16 @@ public class CerealDataTableViewModel : ViewModelBase
         }
         catch (HttpRequestException ex)
         {
-            MessageBoxHelper.ShowError(ex.Message);
+            switch (ex.StatusCode)
+            {
+                case HttpStatusCode.Conflict:
+                    MessageBoxHelper.ShowError($"A concurrent update has been detected for \"{row.Cereal.Name}\"\nReload the database and try again!", "Concurrent Update Conflict!");
+                    break;
+
+                default:
+                    MessageBoxHelper.ShowError(ex.Message); 
+                    break;
+            }
         }
     }
 

@@ -133,6 +133,7 @@ public sealed class CerealServiceTests
 
         // Act
         service.CreateCereal(newCereal);
+        DateTime dbVersion = DateTime.UtcNow;
         var all = service.GetAllCereals();
 
         // Assert
@@ -140,6 +141,7 @@ public sealed class CerealServiceTests
         Assert.HasCount(1, all);
         Assert.AreEqual(expectedName, all[0].Name);
         Assert.AreEqual(expectedId, all[0].Id);
+        Assert.AreEqual(dbVersion.Date, all[0].DbVersion?.Date);
         Assert.AreNotEqual(id, all[0].Id);
     }
 
@@ -167,24 +169,29 @@ public sealed class CerealServiceTests
         // Arrange
         int expectedId = 1;
         string oldName = "Old";
-        string updatedName = "Updated";
-        CerealData newCereal = new() { Id = expectedId, Name = updatedName };
+        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
 
         using var context = FakeDbContext.Create();
-        context.Add(new CerealData { Id = expectedId, Name = oldName });
+        context.Add(new CerealData { Id = expectedId, Name = oldName, DbVersion = oldVersion });
         context.SaveChanges();
+
+        string updatedName = "Updated";
+        CerealData updatedCereal = new() { Id = expectedId, Name = updatedName, DbVersion = oldVersion };
 
         var service = new CerealService(context);
 
         // Act
-        service.UpdateCereal(newCereal);
+        service.UpdateCereal(updatedCereal);
+        DateTime newVersion = DateTime.UtcNow;
         var result = service.GetCereal(expectedId);
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(updatedName, result.Name);
         Assert.AreEqual(expectedId, result.Id);
+        Assert.AreEqual(updatedName, result.Name);
+        Assert.AreEqual(newVersion.Date, result.DbVersion?.Date);
         Assert.AreNotEqual(oldName, result.Name);
+        Assert.AreNotEqual(oldVersion, result.DbVersion);
     }
 
     [TestMethod]
@@ -200,6 +207,26 @@ public sealed class CerealServiceTests
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.UpdateCereal(newCereal));
+    }
+
+    [TestMethod]
+    public void UpdateCereal_ConcurrentUpdate_ReturnsInvalidOperationException()
+    {
+        // Arrange
+        int expectedId = 1;
+        string oldName = "Old";
+        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
+
+        CerealData newCereal = new() { Id = expectedId, Name = "Updated", DbVersion = oldVersion };
+
+        using var context = FakeDbContext.Create();
+        context.Add(new CerealData { Id = expectedId, Name = oldName, DbVersion = oldVersion.AddDays(2) });
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act & Assert
+        Assert.ThrowsExactly<InvalidOperationException>(() => service.UpdateCereal(newCereal));
     }
 
     [TestMethod]

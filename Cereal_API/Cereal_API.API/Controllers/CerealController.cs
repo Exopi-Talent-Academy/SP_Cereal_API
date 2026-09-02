@@ -77,6 +77,10 @@ public class CerealController(ICerealService cerealService) : ControllerBase
             cerealService.UpdateCereal(data);
             return Ok();
         }
+        catch (InvalidOperationException)
+        {
+            return Conflict();
+        }
         catch (KeyNotFoundException)
         {
             return NotFound();

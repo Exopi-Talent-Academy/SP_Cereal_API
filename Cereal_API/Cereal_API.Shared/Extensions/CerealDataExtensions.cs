@@ -22,6 +22,7 @@ public static class CerealDataExtensions
         original.Weight = newData.Weight;
         original.Cups = newData.Cups;
         original.Rating = newData.Rating;
+        original.DbVersion = newData.DbVersion;
     }
 
     public static CerealData Clone(this CerealData original)
@@ -44,7 +45,8 @@ public static class CerealDataExtensions
             Shelf = original.Shelf,
             Weight = original.Weight,
             Cups = original.Cups,
-            Rating = original.Rating
+            Rating = original.Rating,
+            DbVersion = original.DbVersion,
         };
     }
 
@@ -67,6 +69,7 @@ public static class CerealDataExtensions
             original.Shelf == other.Shelf &&
             original.Weight == other.Weight &&
             original.Cups == other.Cups &&
-            original.Rating == other.Rating;
+            original.Rating == other.Rating &&
+            original.DbVersion == other.DbVersion;
     }
 }
