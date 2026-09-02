@@ -16,8 +16,45 @@ public class AuthenticationState : ViewModelBase
         }
     }
 
-    public void SetLoggedIn(bool loggedIn)
+    private string? _username;
+    public string? Username
     {
-        IsLoggedIn = loggedIn;
+        get => _username;
+        private set
+        {
+            if (_username == value)
+                return;
+
+            _username = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private string? _role;
+    public string? Role
+    {
+        get => _role;
+        private set
+        {
+            if (_role == value)
+                return;
+
+            _role = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public void SetLoggedIn(string username, string role)
+    {
+        Username = username;
+        Role = role;
+        IsLoggedIn = true;
+    }
+
+    public void SetLoggedOut()
+    {
+        Username = null;
+        Role = null;
+        IsLoggedIn = false;
     }
 }

@@ -53,10 +53,13 @@ public class LoginViewModel : ViewModelBase
             _ => string.Empty
         };
 
-        _authenticationState.SetLoggedIn(await _api.Login(Username, password));
-        OnPropertyChanged(nameof(IsLoggedIn));
-
-        if (!_authenticationState.IsLoggedIn)
+        var loginResult = await _api.Login(Username, password);
+        if (loginResult != null)
+        {
+            _authenticationState.SetLoggedIn(loginResult.Username, loginResult.Role);
+            OnPropertyChanged(nameof(IsLoggedIn));
+        }
+        else
         {
             MessageBoxHelper.ShowError("Invalid Username or Password!", "Failed!");
         }
@@ -72,7 +75,7 @@ public class LoginViewModel : ViewModelBase
             passwordBox.Password = string.Empty;
         }
 
-        _authenticationState.SetLoggedIn(false);
+        _authenticationState.SetLoggedOut();
         OnPropertyChanged(nameof(IsLoggedIn));
     }
 }

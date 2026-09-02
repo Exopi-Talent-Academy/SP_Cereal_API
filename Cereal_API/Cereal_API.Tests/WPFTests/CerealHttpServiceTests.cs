@@ -20,26 +20,31 @@ public class CerealHttpServiceTests
     }
 
     [TestMethod]
-    public async Task Login_Authorized_ReturnsTrue()
+    public async Task Login_Authorized_ReturnsNotNull()
     {
         // Arrange
-        var username = "admin";
-        var password = "password";
-        var handler = FakeHttpMessageHandler.Create();
+        AuthenticationResult expectedResult = new()
+        {
+            Username = "admin",
+            Role = "Admin"
+        };
+        var handler = FakeHttpMessageHandler.CreateFor(expectedResult);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
         // Act
-        var actual = await service.Login(username, password);
+        var actual = await service.Login(expectedResult.Username, "password");
 
         // Assert
-        Assert.IsTrue(actual);
+        Assert.IsNotNull(actual);
+        Assert.AreEqual(expectedResult.Username, actual.Username);
+        Assert.AreEqual(expectedResult.Role, actual.Role);
         Assert.AreEqual(HttpMethod.Get, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL_LOGIN_CHECK, handler.Request.RequestUri!.ToString());
     }
 
     [TestMethod]
-    public async Task Login_Unauthorized_ReturnsFalse()
+    public async Task Login_Unauthorized_ReturnsNull()
     {
         // Arrange
         var handler = FakeHttpMessageHandler.Create(HttpStatusCode.Unauthorized);
@@ -50,27 +55,31 @@ public class CerealHttpServiceTests
         var actual = await service.Login("admin", "password");
 
         // Assert
-        Assert.IsFalse(actual);
+        Assert.IsNull(actual);
     }
 
     [TestMethod]
     public async Task Login_Authorized_ValidAuthorization()
     {
         // Arrange
-        var username = "admin";
+        AuthenticationResult expectedResult = new()
+        {
+            Username = "admin",
+            Role = "Admin"
+        };
         var password = "password";
-        var handler = FakeHttpMessageHandler.Create();
+        var handler = FakeHttpMessageHandler.CreateFor(expectedResult);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
         // Act
-        await service.Login(username, password);
+        await service.Login(expectedResult.Username, password);
 
         // Assert
         Assert.IsNotNull(client.DefaultRequestHeaders.Authorization);
         Assert.AreEqual("Basic", client.DefaultRequestHeaders.Authorization!.Scheme);
         var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(client.DefaultRequestHeaders.Authorization.Parameter!));
-        Assert.AreEqual($"{username}:{password}", decoded);
+        Assert.AreEqual($"{expectedResult.Username}:{password}", decoded);
     }
 
     [TestMethod]

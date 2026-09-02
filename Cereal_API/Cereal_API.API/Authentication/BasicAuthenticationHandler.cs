@@ -50,17 +50,18 @@ public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSc
             string username = credentials[0];
             string password = credentials[1];
 
-            string expectedUsername = _configuration["Authentication:Username"]!;
-            string expectedPassword = _configuration["Authentication:Password"]!;
+            var users = _configuration.GetSection("Authentication:Users").Get<List<AuthenticationUser>>();
+            var user = users?.FirstOrDefault(u => u.Username == username && u.Password == password);
 
-            if (username != expectedUsername || password != expectedPassword)
+            if (user == null)
             {
                 return Task.FromResult(AuthenticateResult.Fail("Invalid username or password"));
             }
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var identity = new ClaimsIdentity(claims, Scheme.Name);

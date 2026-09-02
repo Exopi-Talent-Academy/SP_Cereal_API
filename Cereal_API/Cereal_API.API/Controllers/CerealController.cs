@@ -2,6 +2,7 @@
 using Cereal_API.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Cereal_API.API.Controllers;
 
@@ -13,15 +14,21 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     [HttpGet("auth/check", Name = "AuthorizationCheck")]
     public IActionResult AuthorizationCheck()
     {
-        return Ok();
+        return Ok(new AuthenticationResult
+        {
+            Username = User.Identity?.Name ?? "Unknown",
+            Role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Unknown",
+        });
     }
 
+    [Authorize]
     [HttpGet(Name = "GetAllCereals")]
     public IActionResult GetAll()
     {
         return Ok(cerealService.GetAllCereals());
     }
 
+    [Authorize]
     [HttpGet("{id}", Name = "GetCereal")]
     public IActionResult Get(int id)
     {
@@ -35,6 +42,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpGet("{id}/image")]
     public IActionResult GetImage(int id)
     {
@@ -53,7 +61,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = "Editor,Admin")]
     [HttpPost(Name = "CreateCereal")]
     public IActionResult Create(CerealData data)
     {
@@ -68,7 +76,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = "Editor,Admin")]
     [HttpPut(Name = "UpdateCereal")]
     public IActionResult Update(CerealData data)
     {
@@ -87,7 +95,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
         }
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}", Name = "DeleteCereal")]
     public IActionResult Delete(int id)
     {

@@ -16,13 +16,20 @@ public class CerealHttpService(HttpClient httpClient)
     public static string URL_ID(int id) => $"{URL}/{id}";
     public static string URL_ID_IMAGE(int id) => $"{URL_ID(id)}/image";
 
-    public async Task<bool> Login(string username, string password)
+    public async Task<AuthenticationResult?> Login(string username, string password)
     {
         var credentials = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{username}:{password}"));
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", credentials);
 
         using var response = await client.GetAsync(URL_LOGIN_CHECK);
-        return response.IsSuccessStatusCode;
+
+        if (!response.IsSuccessStatusCode)
+        {
+            client.DefaultRequestHeaders.Authorization = null;
+            return null;
+        }
+
+        return await response.Content.ReadFromJsonAsync<AuthenticationResult>();
     }
 
     public async Task Logout()

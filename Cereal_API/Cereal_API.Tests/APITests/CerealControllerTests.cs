@@ -1,8 +1,10 @@
 ﻿using Cereal_API.API.Controllers;
 using Cereal_API.API.Services;
 using Cereal_API.Shared.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.Security.Claims;
 
 namespace Cereal_API.Tests.APITests;
 
@@ -16,11 +18,27 @@ public class CerealControllerTests
         var service = new Mock<ICerealService>();
         var controller = new CerealController(service.Object);
 
+        var claims = new[] 
+        { 
+            new Claim(ClaimTypes.Name, "admin"), 
+            new Claim(ClaimTypes.Role, "Admin") 
+        }; 
+        
+        var identity = new ClaimsIdentity(claims, "Basic"); 
+        
+        controller.ControllerContext = new ControllerContext 
+        { 
+            HttpContext = new DefaultHttpContext 
+            { 
+                User = new ClaimsPrincipal(identity) 
+            } 
+        };
+
         // Act
         var actual = controller.AuthorizationCheck();
 
         // Assert
-        Assert.IsInstanceOfType<OkResult>(actual);
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
     }
 
     [TestMethod]
