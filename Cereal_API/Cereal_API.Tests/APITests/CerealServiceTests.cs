@@ -164,6 +164,78 @@ public sealed class CerealServiceTests
     }
 
     [TestMethod]
+    public void CreateCereals_ValidCerealData_AddsCereals()
+    {
+        // Arrange
+        var newCereals = new List<CerealData>
+        {
+            new() { Id = 0, Name = "A" },
+            new() { Id = 15, Name = "B" },
+            new() { Id = 30, Name = "C" },
+        };
+
+        using var context = FakeDbContext.Create();
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act
+        var errorReports = service.CreateCereals(newCereals);
+        DateTime dbVersion = DateTime.UtcNow;
+        var all = service.GetAllCereals();
+
+        // Assert
+        Assert.IsNotNull(errorReports);
+        Assert.IsEmpty(errorReports);
+
+        Assert.IsNotNull(all);
+        Assert.HasCount(newCereals.Count, all);
+        for (int i = 0; i < all.Count; i++)
+        {
+            Assert.AreEqual(newCereals[i].Name, all[i].Name);
+            Assert.AreEqual(newCereals[i].Id, i);
+            Assert.AreEqual(dbVersion.Date, all[i].DbVersion?.Date);
+            Assert.AreNotEqual(newCereals[i].Id, all[i].Id);
+        }
+    }
+
+    [TestMethod]
+    public void CreateCereals_InvalidCerealData_ReturnsErrorReports()
+    {
+        // Arrange
+        var newCereals = new List<CerealData>
+        {
+            new() { Id = 0, Name = "A", Manufacturer = (CerealEnums.Manufacturer)999 },
+            new() { Id = 15, Name = "B", Type = (CerealEnums.Type)999 },
+            new() { Id = 30, Name = "C" },
+        };
+
+        using var context = FakeDbContext.Create();
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act
+        var errorReports = service.CreateCereals(newCereals);
+        DateTime dbVersion = DateTime.UtcNow;
+        var all = service.GetAllCereals();
+
+        // Assert
+        Assert.IsNotNull(errorReports);
+        Assert.HasCount(2, errorReports);
+
+        Assert.IsNotNull(all);
+        Assert.HasCount(1, all);
+        for (int i = 0; i < all.Count; i++)
+        {
+            Assert.AreEqual(newCereals[i].Name, all[i].Name);
+            Assert.AreEqual(newCereals[i].Id, i);
+            Assert.AreEqual(dbVersion.Date, all[i].DbVersion?.Date);
+            Assert.AreNotEqual(newCereals[i].Id, all[i].Id);
+        }
+    }
+
+    [TestMethod]
     public void UpdateCereal_ExistingId_UpdatesValues()
     {
         // Arrange

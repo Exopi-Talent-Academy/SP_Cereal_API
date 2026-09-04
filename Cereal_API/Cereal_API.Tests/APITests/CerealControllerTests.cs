@@ -202,6 +202,33 @@ public class CerealControllerTests
     }
 
     [TestMethod]
+    public void CreateBulk_ValidRequest_ReturnsOKObject()
+    {
+        // Arrange
+        var newCereals = new List<CerealData>
+        {
+            new() { Id = 0, Name = "A" },
+            new() { Id = 15, Name = "B" },
+            new() { Id = 30, Name = "C" }
+        };
+        var mockFile = new Mock<IFormFile>();
+        // This doesn't work below, so maybe try to use an actual test file!
+        mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes("Id,Name,Manufacturer,Type,Calories,Protein,Fat,Sodium,Fiber,Carbo,Sugars,Potass,Vitamins,Shelf,Weight,Cups,Rating,DbVersion,\n0,A\n15,B\n30,C")));
+        mockFile.Setup(f => f.FileName).Returns("mock.csv");
+        mockFile.Setup(f => f.Length).Returns(100);
+
+        var service = new Mock<ICerealService>();
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.CreateBulk(mockFile.Object);
+
+        // Assert
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
+        service.Verify(x => x.CreateCereals(newCereals), Times.Once);
+    }
+
+    [TestMethod]
     public void Update_ValidRequest_ReturnsOK()
     {
         // Arrange

@@ -52,6 +52,15 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
         _db.SaveChanges();
     }
 
+    public List<ErrorReport> CreateCereals(List<CerealData> cereals)
+    {
+        throw new NotImplementedException();
+
+        // Validate input
+        // On Error: Add ErrorReport
+        // Return list of ErrorReports
+    }
+
     public void UpdateCereal(CerealData cereal)
     {
         CerealData existingCereal = GetCereal(cereal.Id);
