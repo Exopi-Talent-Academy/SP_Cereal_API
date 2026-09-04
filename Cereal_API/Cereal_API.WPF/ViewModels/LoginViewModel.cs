@@ -25,6 +25,7 @@ public class LoginViewModel : ViewModelBase
     }
 
     public bool IsLoggedIn => _authenticationState.IsLoggedIn;
+    public string LoggedInUsername => $"{_authenticationState.Username ?? string.Empty} ({_authenticationState.Role ?? string.Empty})";
 
     public RelayCommand LoginCommand { get; set; }
 
@@ -58,6 +59,7 @@ public class LoginViewModel : ViewModelBase
         {
             _authenticationState.SetLoggedIn(loginResult.Username, loginResult.Role);
             OnPropertyChanged(nameof(IsLoggedIn));
+            OnPropertyChanged(nameof(LoggedInUsername));
         }
         else
         {

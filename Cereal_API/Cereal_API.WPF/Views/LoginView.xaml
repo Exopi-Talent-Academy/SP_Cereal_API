@@ -51,10 +51,18 @@
                     CommandParameter="{Binding ElementName=PasswordInput}"
                     Visibility="{Binding IsLoggedIn, Converter={StaticResource InverseBoolToVisibility}}"/>
 
+            <StackPanel Orientation="Horizontal"
+                        Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}">
+                
+            <TextBlock Text="{Binding LoggedInUsername}" 
+                       Style="{StaticResource LoginTextBlock}"/>
+                
             <Button Content="Logout" 
                     Command="{Binding LogoutCommand}"
-                    CommandParameter="{Binding ElementName=PasswordInput}"
-                    Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"/>
+                    CommandParameter="{Binding ElementName=PasswordInput}"/>
+                
+            </StackPanel>
+
 
         </StackPanel>
     </Border>

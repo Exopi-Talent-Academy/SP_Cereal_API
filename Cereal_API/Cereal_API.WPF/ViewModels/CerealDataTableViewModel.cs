@@ -77,7 +77,9 @@ public class CerealDataTableViewModel : ViewModelBase
 
     public CerealEnums.Manufacturer[] ManufacturerOptions { get; private set; }
 
+    public bool HasCereals => AllCereals.Count > 0;
     public bool IsLoggedIn => _authenticationState.IsLoggedIn;
+    public bool CanModifyTable => _authenticationState.RoleHasEditPermission;
 
     private CancellationTokenSource? _filterCancellation;
 
@@ -154,7 +156,7 @@ public class CerealDataTableViewModel : ViewModelBase
 
         foreach (CerealData cereal in await _api.GetAllCereals())
         {
-            AllCereals.Add(new CerealRowViewModel(cereal, await _api.GetCerealImage(cereal.Id)));
+            AllCereals.Add(new CerealRowViewModel(_authenticationState, cereal, await _api.GetCerealImage(cereal.Id)));
         }
 
         ApplyFilters();
@@ -163,7 +165,7 @@ public class CerealDataTableViewModel : ViewModelBase
     private async void AddCereal()
     {
         var cereal = new CerealData();
-        var row = new CerealRowViewModel(cereal, [], true);
+        var row = new CerealRowViewModel(_authenticationState, cereal, [], true);
 
         AllCereals.Add(row);
         ApplyFilters();
@@ -298,6 +300,7 @@ public class CerealDataTableViewModel : ViewModelBase
         if (e.PropertyName == nameof(AuthenticationState.IsLoggedIn))
         {
             OnPropertyChanged(nameof(IsLoggedIn));
+            OnPropertyChanged(nameof(CanModifyTable));
         }
     }
 }

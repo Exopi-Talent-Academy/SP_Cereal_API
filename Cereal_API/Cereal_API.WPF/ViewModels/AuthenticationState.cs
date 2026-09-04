@@ -44,6 +44,9 @@ public class AuthenticationState : ViewModelBase
         }
     }
 
+    public bool RoleHasEditPermission => IsLoggedIn && Role is "Editor" or "Admin";
+    public bool RoleHasDeletePermission => IsLoggedIn && Role is "Admin";
+
     public void SetLoggedIn(string username, string role)
     {
         Username = username;

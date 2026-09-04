@@ -19,22 +19,25 @@
 
             <Button Content="Add Cereal"
                     Command="{Binding AddCerealCommand}"
-                    Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"/>
+                    Visibility="{Binding CanModifyTable, Converter={StaticResource BoolToVisibility}}"/>
 
             <Button Content="Load Cereals" 
-                    Command="{Binding LoadCerealsCommand}"/>
+                    Command="{Binding LoadCerealsCommand}"
+                    Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"/>
 
         </StackPanel>
 
         <DataGrid Grid.Row="1" 
                   ItemsSource="{Binding FilteredCereals}"
                   SelectedItem="{Binding SelectedCereal, Mode=TwoWay}"
-                  IsReadOnly="{Binding IsLoggedIn, Converter={StaticResource InverseBooleanConverter}}"
+                  Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"
+                  IsReadOnly="{Binding CanModifyTable, Converter={StaticResource InverseBooleanConverter}}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
                   CanUserDeleteRows="False"
                   AddingNewItem="DataGrid_AddingNewItem"
-                  HorizontalAlignment="Left">
+                  HorizontalAlignment="Left"
+                  Margin="2">
             
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Id}" 

@@ -1,11 +1,14 @@
 ﻿using Cereal_API.Shared;
 using Cereal_API.Shared.Extensions;
 using Cereal_API.Shared.Models;
+using System.ComponentModel;
 
 namespace Cereal_API.WPF.ViewModels;
 
 public class CerealRowViewModel : ViewModelBase
 {
+    private readonly AuthenticationState _authenticationState;
+
     public CerealData Cereal { get; }
     private CerealData Original { get; }
 
@@ -286,17 +289,20 @@ public class CerealRowViewModel : ViewModelBase
         }
     }
 
-    public bool ShowSave => IsNew;
-    public bool ShowUpdate => !IsNew && IsModified;
-    public bool ShowDelete => !IsNew && !IsModified;
+    public bool ShowSave => IsNew && _authenticationState.RoleHasEditPermission;
+    public bool ShowUpdate => !IsNew && IsModified && _authenticationState.RoleHasEditPermission;
+    public bool ShowDelete => !IsNew && !IsModified && _authenticationState.RoleHasDeletePermission;
 
-    public CerealRowViewModel(CerealData cereal, byte[] image, bool isNew = false)
+    public CerealRowViewModel(AuthenticationState authenticationState, CerealData cereal, byte[] image, bool isNew = false)
     {
+        _authenticationState = authenticationState;
         Cereal = cereal;
         Image = image;
         IsNew = isNew;
 
         Original = isNew ? new() : cereal.Clone();
+
+        _authenticationState.PropertyChanged += AuthenticationState_PropertyChanged;
     }
 
     public void SaveNew(int newID)
@@ -323,5 +329,15 @@ public class CerealRowViewModel : ViewModelBase
     private void MakeModifiable()
     {
         IsModified = !Cereal.IsEqual(Original);
+    }
+
+    private void AuthenticationState_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(AuthenticationState.IsLoggedIn))
+        {
+            OnPropertyChanged(nameof(ShowSave));
+            OnPropertyChanged(nameof(ShowUpdate));
+            OnPropertyChanged(nameof(ShowDelete));
+        }
     }
 }
