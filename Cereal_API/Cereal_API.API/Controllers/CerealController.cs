@@ -135,6 +135,14 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     [HttpPost("{id}/restore", Name = "RestoreCereal")]
     public IActionResult Restore(int id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            cerealService.RestoreCereal(id);
+            return Ok();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

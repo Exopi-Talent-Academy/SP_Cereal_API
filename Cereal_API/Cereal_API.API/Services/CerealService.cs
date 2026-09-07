@@ -83,12 +83,19 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
     {
         CerealData existingCereal = GetCereal(id);
 
-        _db.Cereals.Remove(existingCereal);
+        existingCereal.MarkedAsDeleted = true;
+        existingCereal.DbVersion = DateTime.UtcNow;
+        _db.Cereals.Update(existingCereal);
         _db.SaveChanges();
     }
 
     public void RestoreCereal(int id)
     {
-        throw new NotImplementedException();
+        CerealData existingCereal = GetCereal(id);
+
+        existingCereal.MarkedAsDeleted = false;
+        existingCereal.DbVersion = DateTime.UtcNow;
+        _db.Cereals.Update(existingCereal);
+        _db.SaveChanges();
     }
 }

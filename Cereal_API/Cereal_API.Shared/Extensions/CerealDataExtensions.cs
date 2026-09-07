@@ -50,6 +50,7 @@ public static class CerealDataExtensions
         original.Cups = newData.Cups;
         original.Rating = newData.Rating;
         original.DbVersion = newData.DbVersion;
+        original.MarkedAsDeleted = newData.MarkedAsDeleted;
     }
 
     public static CerealData Clone(this CerealData original)
@@ -74,6 +75,7 @@ public static class CerealDataExtensions
             Cups = original.Cups,
             Rating = original.Rating,
             DbVersion = original.DbVersion,
+            MarkedAsDeleted = original.MarkedAsDeleted,
         };
     }
 
@@ -97,6 +99,7 @@ public static class CerealDataExtensions
             original.Weight == other.Weight &&
             original.Cups == other.Cups &&
             original.Rating == other.Rating &&
-            original.DbVersion == other.DbVersion;
+            original.DbVersion == other.DbVersion &&
+            original.MarkedAsDeleted == other.MarkedAsDeleted;
     }
 }
