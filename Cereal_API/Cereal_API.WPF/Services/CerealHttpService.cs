@@ -1,5 +1,6 @@
 ﻿using Cereal_API.Shared;
 using Cereal_API.Shared.Models;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -94,7 +95,17 @@ public class CerealHttpService(HttpClient httpClient)
 
     public async Task<List<ErrorReport>> CreateCereals(string filePath)
     {
-        throw new NotImplementedException();
+        using var form = new MultipartFormDataContent();
+        await using var fileStream = File.OpenRead(filePath);
+        using var fileContent = new StreamContent(fileStream);
+        
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
+        form.Add(fileContent, "file", Path.GetFileName(filePath));
+        
+        using var response = await client.PostAsync(URL_BULK, form);
+        response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<List<ErrorReport>>() ?? [];
     }
 
     public async Task UpdateCereal(CerealData cereal)
