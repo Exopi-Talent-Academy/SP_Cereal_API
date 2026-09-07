@@ -12,7 +12,7 @@ public interface ICerealService
 
     void CreateCereal(CerealData cereal);
 
-    List<ErrorReport> CreateCereals(List<CerealData> cereals);
+    void CreateCereals(List<CerealData> cereals);
 
     void UpdateCereal(CerealData cereal);
 

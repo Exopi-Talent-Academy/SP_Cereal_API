@@ -2,6 +2,7 @@
 using Cereal_API.API.Database;
 using Cereal_API.API.Services;
 using Cereal_API.Shared.Models;
+using Cereal_API.Tests.Helper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -203,10 +204,12 @@ public class CerealControllerTests
     }
 
     [TestMethod]
-    public void CreateBulk_ValidRequest_ReturnsOKObject()
+    [DataRow("CSV Valid.csv", 0)]
+    [DataRow("CSV Validation Errors.csv", 4)]
+    public void CreateBulk_ValidCSVFile_ReturnsOkWithExpectedErrorReports(string csvFileName, int expectedErrorReports)
     {
         // Arrange
-        string csvFilePath = Path.Combine(AppContext.BaseDirectory, "APITests", "Mock Files", "mock cereal.csv");
+        string csvFilePath = MockFilesHelper.GetMockFilePath(csvFileName);
         byte[] csvFile = File.ReadAllBytes(csvFilePath);
         var newCereals = CsvImporter.Load(csvFilePath);
 
@@ -221,7 +224,10 @@ public class CerealControllerTests
 
         // Assert
         Assert.IsInstanceOfType<OkObjectResult>(actual);
-        service.Verify(x => x.CreateCereals(newCereals), Times.Once);
+
+        var errorReports = (actual as OkObjectResult)?.Value as List<ErrorReport>;
+        Assert.IsNotNull(errorReports);
+        Assert.HasCount(expectedErrorReports, errorReports);
     }
 
     [TestMethod]

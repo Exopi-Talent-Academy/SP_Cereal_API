@@ -78,13 +78,23 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     }
 
     [Authorize(Roles = "Editor,Admin")]
-    [HttpPost("/bulk", Name = "CreateCereals")]
+    [HttpPost("bulk", Name = "CreateCereals")]
     public IActionResult CreateBulk(IFormFile file)
     {
         if (file == null)
             return BadRequest();
-        
-        return Ok(cerealService.CreateCereals(CsvImporter.Load(file)));
+
+        List<ErrorReport> errorReports = [];
+        try
+        {
+            cerealService.CreateCereals(CsvImporter.Load(file, errorReports));
+        }
+        catch (Exception ex)
+        {
+            errorReports.Add(new("Bulk import failed", ex.Message));
+        }
+
+        return Ok(errorReports);
     }
 
     [Authorize(Roles = "Editor,Admin")]

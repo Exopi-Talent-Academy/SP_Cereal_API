@@ -75,7 +75,7 @@ public sealed class CerealServiceTests
         context.Add(new CerealData { Id = id, Name = fileName });
         context.SaveChanges();
 
-        var service = new CerealService(context, FakeDbContext.ImageFolderPath);
+        var service = new CerealService(context, MockFilesHelper.MockFolderPath);
 
         // Act
         var (Data, ContentType) = service.GetImage(id);
@@ -97,7 +97,7 @@ public sealed class CerealServiceTests
         context.Add(new CerealData { Id = id, Name = name });
         context.SaveChanges();
 
-        var service = new CerealService(context, FakeDbContext.ImageFolderPath);
+        var service = new CerealService(context, MockFilesHelper.MockFolderPath);
 
         // Act & Assert
         Assert.ThrowsExactly<FileNotFoundException>(() => service.GetImage(id));
@@ -110,7 +110,7 @@ public sealed class CerealServiceTests
         using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context, FakeDbContext.ImageFolderPath);
+        var service = new CerealService(context, MockFilesHelper.MockFolderPath);
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.GetImage(1));
@@ -146,13 +146,14 @@ public sealed class CerealServiceTests
     }
 
     [TestMethod]
-    [DataRow((CerealEnums.Manufacturer)999, (CerealEnums.Type)0)]
-    [DataRow((CerealEnums.Manufacturer)0, (CerealEnums.Type)999)]
-    [DataRow((CerealEnums.Manufacturer)999, (CerealEnums.Type)999)]
-    public void CreateCereal_InvalidEnums_ThrowsArgumentException(CerealEnums.Manufacturer manufacturer, CerealEnums.Type type)
+    [DataRow("", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, 100)]
+    [DataRow("A", (CerealEnums.Manufacturer)999, (CerealEnums.Type)0, 100)]
+    [DataRow("A", (CerealEnums.Manufacturer)0, (CerealEnums.Type)999, 100)]
+    [DataRow("A", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, -1)]
+    public void CreateCereal_FailingValidation_ThrowsArgumentException(string name, CerealEnums.Manufacturer manufacturer, CerealEnums.Type type, int calories)
     {
         // Arrange
-        CerealData newCereal = new() { Id = 0, Name = "A", Manufacturer = manufacturer, Type = type };
+        CerealData newCereal = new() { Id = 0, Name = name, Manufacturer = manufacturer, Type = type, Calories = calories };
 
         using var context = FakeDbContext.Create();
         context.SaveChanges();
@@ -180,33 +181,33 @@ public sealed class CerealServiceTests
         var service = new CerealService(context);
 
         // Act
-        var errorReports = service.CreateCereals(newCereals);
+        service.CreateCereals(newCereals);
         DateTime dbVersion = DateTime.UtcNow;
         var all = service.GetAllCereals();
 
         // Assert
-        Assert.IsNotNull(errorReports);
-        Assert.IsEmpty(errorReports);
-
         Assert.IsNotNull(all);
         Assert.HasCount(newCereals.Count, all);
         for (int i = 0; i < all.Count; i++)
         {
             Assert.AreEqual(newCereals[i].Name, all[i].Name);
-            Assert.AreEqual(newCereals[i].Id, i);
+            Assert.AreEqual(i + 1, all[i].Id);
             Assert.AreEqual(dbVersion.Date, all[i].DbVersion?.Date);
-            Assert.AreNotEqual(newCereals[i].Id, all[i].Id);
         }
     }
 
     [TestMethod]
-    public void CreateCereals_InvalidCerealData_ReturnsErrorReports()
+    [DataRow("", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, 100)]
+    [DataRow("B", (CerealEnums.Manufacturer)999, (CerealEnums.Type)0, 100)]
+    [DataRow("B", (CerealEnums.Manufacturer)0, (CerealEnums.Type)999, 100)]
+    [DataRow("B", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, -1)]
+    public void CreateCereals_FailingValidation_ThrowsArgumentException(string name, CerealEnums.Manufacturer manufacturer, CerealEnums.Type type, int calories)
     {
         // Arrange
         var newCereals = new List<CerealData>
         {
-            new() { Id = 0, Name = "A", Manufacturer = (CerealEnums.Manufacturer)999 },
-            new() { Id = 15, Name = "B", Type = (CerealEnums.Type)999 },
+            new() { Id = 0, Name = "A" },
+            new() { Id = 15, Name = name, Manufacturer = manufacturer, Type = type, Calories = calories },
             new() { Id = 30, Name = "C" },
         };
 
@@ -215,24 +216,8 @@ public sealed class CerealServiceTests
 
         var service = new CerealService(context);
 
-        // Act
-        var errorReports = service.CreateCereals(newCereals);
-        DateTime dbVersion = DateTime.UtcNow;
-        var all = service.GetAllCereals();
-
-        // Assert
-        Assert.IsNotNull(errorReports);
-        Assert.HasCount(2, errorReports);
-
-        Assert.IsNotNull(all);
-        Assert.HasCount(1, all);
-        for (int i = 0; i < all.Count; i++)
-        {
-            Assert.AreEqual(newCereals[i].Name, all[i].Name);
-            Assert.AreEqual(newCereals[i].Id, i);
-            Assert.AreEqual(dbVersion.Date, all[i].DbVersion?.Date);
-            Assert.AreNotEqual(newCereals[i].Id, all[i].Id);
-        }
+        // Act & Assert
+        Assert.ThrowsExactly<ArgumentException>(() => service.CreateCereals(newCereals));
     }
 
     [TestMethod]

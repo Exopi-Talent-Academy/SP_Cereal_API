@@ -10,6 +10,4 @@ public static class FakeDbContext
         var options = new DbContextOptionsBuilder<AppDbContext>().UseInMemoryDatabase(Guid.NewGuid().ToString()).Options;
         return new AppDbContext(options);
     }
-
-    public static string ImageFolderPath => Path.Combine(AppContext.BaseDirectory, "APITests", "Mock Files");
 }

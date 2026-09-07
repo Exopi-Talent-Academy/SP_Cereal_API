@@ -1,4 +1,5 @@
 ﻿using Cereal_API.Shared;
+using Cereal_API.Shared.Extensions;
 using Cereal_API.Shared.Models;
 using System.Globalization;
 
@@ -6,7 +7,7 @@ namespace Cereal_API.API.Database;
 
 public static class CsvImporter
 {
-    public static List<CerealData> Load(IFormFile file)
+    public static List<CerealData> Load(IFormFile file, List<ErrorReport>? errorReports = null)
     {
         List<CerealData> cereals = [];
         using var reader = new StreamReader(file.OpenReadStream());
@@ -26,9 +27,15 @@ public static class CsvImporter
 
                 cereals.Add(ImportLine(line));
             }
+            catch (ArgumentException ex)
+            {
+                DebugHelper.ReportException($"Validation failed for row:\n{line}", ex);
+                errorReports?.Add(new ErrorReport($"Validation failed for row:\n{line}", ex.Message));
+            }
             catch (Exception ex)
             {
                 DebugHelper.ReportException($"Failed to import row:\n{line}", ex);
+                errorReports?.Add(new ErrorReport($"Failed to import row:\n{line}", ex.Message));
             }
         }
 
@@ -64,7 +71,7 @@ public static class CsvImporter
     private static CerealData ImportLine(string line)
     {
         var values = line.Split(';');
-        return new CerealData
+        CerealData cereal = new()
         {
             Name = values[0],
             Manufacturer = Enum.Parse<CerealEnums.Manufacturer>(values[1]),
@@ -84,5 +91,8 @@ public static class CsvImporter
             Rating = float.Parse(values[15], CultureInfo.InvariantCulture),
             DbVersion = DateTime.UtcNow,
         };
+        cereal.Validate();
+        
+        return cereal;
     }
 }

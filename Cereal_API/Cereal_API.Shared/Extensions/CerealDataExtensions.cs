@@ -4,6 +4,33 @@ namespace Cereal_API.Shared.Extensions;
 
 public static class CerealDataExtensions
 {
+    public static void Validate(this CerealData cereal)
+    {
+        if (string.IsNullOrWhiteSpace(cereal.Name))
+            throw new ArgumentException("Cereal name is required.");
+        
+        if (!Enum.IsDefined(typeof(CerealEnums.Manufacturer), cereal.Manufacturer))
+            throw new ArgumentException("Invalid cereal manufacturer.");
+
+        if (!Enum.IsDefined(typeof(CerealEnums.Type), cereal.Type))
+            throw new ArgumentException("Invalid cereal type.");
+
+        if (cereal.Calories < 0 || 
+            cereal.Protein < 0 || 
+            cereal.Fat < 0 || 
+            cereal.Sodium < 0 ||
+            cereal.Fiber < 0 || 
+            cereal.Carbo < 0 || 
+            cereal.Sugars < 0 || 
+            cereal.Potass < 0 ||
+            cereal.Vitamins < 0 || 
+            cereal.Shelf < 0 || 
+            cereal.Weight < 0 || 
+            cereal.Cups < 0 ||
+            cereal.Rating < 0)
+            throw new ArgumentException("Invalid cereal values.");
+    }
+
     public static void SetValues(this CerealData original, CerealData newData)
     {
         original.Name = newData.Name;
