@@ -1,4 +1,5 @@
 ﻿using Cereal_API.API.Controllers;
+using Cereal_API.API.Database;
 using Cereal_API.API.Services;
 using Cereal_API.Shared.Models;
 using Microsoft.AspNetCore.Http;
@@ -205,17 +206,12 @@ public class CerealControllerTests
     public void CreateBulk_ValidRequest_ReturnsOKObject()
     {
         // Arrange
-        var newCereals = new List<CerealData>
-        {
-            new() { Id = 0, Name = "A" },
-            new() { Id = 15, Name = "B" },
-            new() { Id = 30, Name = "C" }
-        };
+        string csvFilePath = Path.Combine(AppContext.BaseDirectory, "APITests", "Mock Files", "mock cereal.csv");
+        byte[] csvFile = File.ReadAllBytes(csvFilePath);
+        var newCereals = CsvImporter.Load(csvFilePath);
+
         var mockFile = new Mock<IFormFile>();
-        // This doesn't work below, so maybe try to use an actual test file!
-        mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes("Id,Name,Manufacturer,Type,Calories,Protein,Fat,Sodium,Fiber,Carbo,Sugars,Potass,Vitamins,Shelf,Weight,Cups,Rating,DbVersion,\n0,A\n15,B\n30,C")));
-        mockFile.Setup(f => f.FileName).Returns("mock.csv");
-        mockFile.Setup(f => f.Length).Returns(100);
+        mockFile.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(csvFile));
 
         var service = new Mock<ICerealService>();
         var controller = new CerealController(service.Object);

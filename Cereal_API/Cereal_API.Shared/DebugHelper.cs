@@ -14,4 +14,9 @@ public static class DebugHelper
     {
         Report($"{methodName} threw the error: {ex.Message}");
     }
+
+    public static void ReportException(string message, Exception ex, [CallerMemberName] string? methodName = null)
+    {
+        Report($"{methodName} threw the error: {message}\n{ex.Message}");
+    }
 }

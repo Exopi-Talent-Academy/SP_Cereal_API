@@ -6,9 +6,38 @@ namespace Cereal_API.API.Database;
 
 public static class CsvImporter
 {
+    public static List<CerealData> Load(IFormFile file)
+    {
+        List<CerealData> cereals = [];
+        using var reader = new StreamReader(file.OpenReadStream());
+
+        // Skip:
+        // Row 0 = column names
+        // Row 1 = data types
+        reader.ReadLine();
+        reader.ReadLine();
+        while (!reader.EndOfStream)
+        {
+            var line = reader.ReadLine();
+            try
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+
+                cereals.Add(ImportLine(line));
+            }
+            catch (Exception ex)
+            {
+                DebugHelper.ReportException($"Failed to import row:\n{line}", ex);
+            }
+        }
+
+        return cereals;
+    }
+
     public static List<CerealData> Load(string path)
     {
-        var cereals = new List<CerealData>();
+        List<CerealData> cereals = [];
         var lines = File.ReadAllLines(path);
 
         // Skip:
@@ -21,35 +50,39 @@ public static class CsvImporter
                 if (string.IsNullOrWhiteSpace(line))
                     continue;
 
-                var values = line.Split(';');
-
-                cereals.Add(new CerealData
-                {
-                    Name = values[0],
-                    Manufacturer = Enum.Parse<CerealEnums.Manufacturer>(values[1]),
-                    Type = Enum.Parse<CerealEnums.Type>(values[2]),
-                    Calories = int.Parse(values[3]),
-                    Protein = int.Parse(values[4]),
-                    Fat = int.Parse(values[5]),
-                    Sodium = int.Parse(values[6]),
-                    Fiber = float.Parse(values[7], CultureInfo.InvariantCulture),
-                    Carbo = float.Parse(values[8], CultureInfo.InvariantCulture),
-                    Sugars = int.Parse(values[9]),
-                    Potass = int.Parse(values[10]),
-                    Vitamins = int.Parse(values[11]),
-                    Shelf = int.Parse(values[12]),
-                    Weight = float.Parse(values[13], CultureInfo.InvariantCulture),
-                    Cups = float.Parse(values[14], CultureInfo.InvariantCulture),
-                    Rating = float.Parse(values[15], CultureInfo.InvariantCulture),
-                    DbVersion = DateTime.UtcNow,
-                });
+                cereals.Add(ImportLine(line));
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Failed to import row:\n{line}\n{ex.Message}");
+                DebugHelper.ReportException($"Failed to import row:\n{line}", ex);
             }
         }
 
         return cereals;
+    }
+
+    private static CerealData ImportLine(string line)
+    {
+        var values = line.Split(';');
+        return new CerealData
+        {
+            Name = values[0],
+            Manufacturer = Enum.Parse<CerealEnums.Manufacturer>(values[1]),
+            Type = Enum.Parse<CerealEnums.Type>(values[2]),
+            Calories = int.Parse(values[3]),
+            Protein = int.Parse(values[4]),
+            Fat = int.Parse(values[5]),
+            Sodium = int.Parse(values[6]),
+            Fiber = float.Parse(values[7], CultureInfo.InvariantCulture),
+            Carbo = float.Parse(values[8], CultureInfo.InvariantCulture),
+            Sugars = int.Parse(values[9]),
+            Potass = int.Parse(values[10]),
+            Vitamins = int.Parse(values[11]),
+            Shelf = int.Parse(values[12]),
+            Weight = float.Parse(values[13], CultureInfo.InvariantCulture),
+            Cups = float.Parse(values[14], CultureInfo.InvariantCulture),
+            Rating = float.Parse(values[15], CultureInfo.InvariantCulture),
+            DbVersion = DateTime.UtcNow,
+        };
     }
 }

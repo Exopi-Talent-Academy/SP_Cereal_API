@@ -1,4 +1,4 @@
-﻿using CsvHelper;
+﻿using Cereal_API.API.Database;
 using Cereal_API.API.Services;
 using Cereal_API.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -79,17 +79,12 @@ public class CerealController(ICerealService cerealService) : ControllerBase
 
     [Authorize(Roles = "Editor,Admin")]
     [HttpPost("/bulk", Name = "CreateCereals")]
-    //[Consumes("text/csv")]
     public IActionResult CreateBulk(IFormFile file)
     {
         if (file == null)
             return BadRequest();
         
-        // Maybe find a way to use the CsvImporter!
-        using var reader = new StreamReader(file.OpenReadStream());
-        using var csv = new CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture);
-
-        return Ok(cerealService.CreateCereals(csv.GetRecords<CerealData>().ToList()));
+        return Ok(cerealService.CreateCereals(CsvImporter.Load(file)));
     }
 
     [Authorize(Roles = "Editor,Admin")]

@@ -11,5 +11,5 @@ public static class FakeDbContext
         return new AppDbContext(options);
     }
 
-    public static string ImageFolderPath => Path.Combine(AppContext.BaseDirectory, "APITests", "Images");
+    public static string ImageFolderPath => Path.Combine(AppContext.BaseDirectory, "APITests", "Mock Files");
 }

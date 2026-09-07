@@ -1,0 +1,4 @@
+name;mfr;type;calories;protein;fat;sodium;fiber;carbo;sugars;potass;vitamins;shelf;weight;cups;rating
+String;Categorical;Categorical;Int;Int;Int;Int;Float;Float;Int;Int;Int;Int;Float;Float;Float
+Coco Puffs;K;C;70;4;1;130;10;5;6;280;25;3;1;0.33;68.402.973
+Coco Puffs Crunches;K;C;120;3;5;15;2;8;8;135;0;3;1;1;33.983.679
