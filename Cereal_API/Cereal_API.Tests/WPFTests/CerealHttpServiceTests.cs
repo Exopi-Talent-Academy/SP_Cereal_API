@@ -258,6 +258,32 @@ public class CerealHttpServiceTests
     }
 
     [TestMethod]
+    [DataRow("CSV Valid.csv", 0)]
+    [DataRow("CSV Validation Errors.csv", 4)]
+    public async Task CreateCereals_POSTRequest_ReturnsErrorReports(string csvFileName, int expectedErrorReports)
+    {
+        // Arrange
+        List<ErrorReport> reports = [];
+        for (int i = 0; i < expectedErrorReports; i++)
+        {
+            reports.Add(new ErrorReport("", ""));
+        }
+        var handler = FakeHttpMessageHandler.CreateFor(reports);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        var errorReports = await service.CreateCereals(MockFilesHelper.GetMockFilePath(csvFileName));
+
+        // Assert
+        Assert.AreEqual(HttpMethod.Post, handler.Request!.Method);
+        Assert.AreEqual(baseUrl + CerealHttpService.URL_BULK, handler.Request.RequestUri!.ToString());
+
+        Assert.IsNotNull(errorReports);
+        Assert.HasCount(expectedErrorReports, errorReports);
+    }
+
+    [TestMethod]
     public async Task UpdateCereal_PUTRequest_ReturnsJSONBody()
     {
         // Arrange
