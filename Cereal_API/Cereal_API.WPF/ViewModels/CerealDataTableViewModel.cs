@@ -4,10 +4,12 @@ using Cereal_API.WPF.Commands;
 using Cereal_API.WPF.Filters;
 using Cereal_API.WPF.Helpers;
 using Cereal_API.WPF.Services;
+using Microsoft.Win32;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 
 namespace Cereal_API.WPF.ViewModels;
 
@@ -69,6 +71,7 @@ public class CerealDataTableViewModel : ViewModelBase
 
     public RelayCommand LoadCerealsCommand {  get; private set; }
     public RelayCommand AddCerealCommand { get; private set; }
+    public RelayCommand ImportCerealsCommand { get; private set; }
     public RelayCommand SaveNewCerealCommand { get; private set; }
     public RelayCommand CancelNewCerealCommand { get; private set; }
     public RelayCommand UpdateModifiedCerealCommand { get; private set; }
@@ -126,6 +129,10 @@ public class CerealDataTableViewModel : ViewModelBase
             execute: _ => AddCereal(),
             canExecute: _ => true);
 
+        ImportCerealsCommand = new RelayCommand(
+            execute: _ => ImportCereals(),
+            canExecute: _ => true);
+
         SaveNewCerealCommand = new RelayCommand(
             execute: parameter => SaveNewCereal((CerealRowViewModel)parameter!),
             canExecute: parameter => parameter is CerealRowViewModel);
@@ -169,6 +176,40 @@ public class CerealDataTableViewModel : ViewModelBase
 
         AllCereals.Add(row);
         ApplyFilters();
+    }
+
+    private async void ImportCereals()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Select a CSV file to import",
+            Filter = "CSV Files (*.csv)|*.csv",
+            Multiselect = false
+        };
+
+        if (dialog.ShowDialog() == false)
+            return;
+
+        try
+        {
+            var errorReports = await _api.CreateCereals(dialog.FileName);
+
+            if (errorReports.Count > 0)
+            {
+                StringBuilder errorMessage = new("Some rows failed to import:\n\n");
+                foreach (var report in errorReports)
+                {
+                    errorMessage.AppendLine($"{report.Message}\n{report.Error}\n");
+                }
+                MessageBoxHelper.ShowError(errorMessage.ToString());
+            }
+
+            LoadCereals();
+        }
+        catch (HttpRequestException ex)
+        {
+            MessageBoxHelper.ShowError(ex.Message);
+        }
     }
 
     private async void SaveNewCereal(CerealRowViewModel row)

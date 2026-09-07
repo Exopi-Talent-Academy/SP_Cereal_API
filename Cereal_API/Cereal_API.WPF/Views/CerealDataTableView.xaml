@@ -17,13 +17,17 @@
         <StackPanel Grid.Row="0" 
                     Orientation="Horizontal">
 
+            <Button Content="Load Cereals" 
+                    Command="{Binding LoadCerealsCommand}"
+                    Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"/>
+            
             <Button Content="Add Cereal"
                     Command="{Binding AddCerealCommand}"
                     Visibility="{Binding CanModifyTable, Converter={StaticResource BoolToVisibility}}"/>
 
-            <Button Content="Load Cereals" 
-                    Command="{Binding LoadCerealsCommand}"
-                    Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVisibility}}"/>
+            <Button Content="Import CSV" 
+                    Command="{Binding ImportCerealsCommand}"
+                    Visibility="{Binding CanModifyTable, Converter={StaticResource BoolToVisibility}}"/>
 
         </StackPanel>
 
