@@ -347,4 +347,34 @@ public class CerealHttpServiceTests
         // Act & Assert
         await Assert.ThrowsExactlyAsync<HttpRequestException>(() => service.DeleteCereal(1));
     }
+
+    [TestMethod]
+    public async Task RestoreCereal_POSTRequest_ReturnsSucceeds()
+    {
+        // Arrange
+        var id = 1;
+
+        var handler = FakeHttpMessageHandler.Create();
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act
+        await service.RestoreCereal(id);
+
+        // Assert
+        Assert.AreEqual(HttpMethod.Post, handler.Request!.Method);
+        Assert.AreEqual(baseUrl + CerealHttpService.URL_ID_RESTORE(id), handler.Request.RequestUri!.ToString());
+    }
+
+    [TestMethod]
+    public async Task RestoreCereal_Exception_ReturnsException()
+    {
+        // Arrange
+        var handler = FakeHttpMessageHandler.Create(HttpStatusCode.NotFound);
+        var client = CreateClient(handler);
+        var service = new CerealHttpService(client);
+
+        // Act & Assert
+        await Assert.ThrowsExactlyAsync<HttpRequestException>(() => service.RestoreCereal(1));
+    }
 }

@@ -16,6 +16,7 @@ public class CerealHttpService(HttpClient httpClient)
     public const string URL_LOGIN_CHECK = $"{URL}/auth/check";
     public static string URL_ID(int id) => $"{URL}/{id}";
     public static string URL_ID_IMAGE(int id) => $"{URL_ID(id)}/image";
+    public static string URL_ID_RESTORE(int id) => $"{URL_ID(id)}/restore";
     public const string URL_BULK = $"{URL}/bulk";
 
     public async Task<AuthenticationResult?> Login(string username, string password)
@@ -118,5 +119,10 @@ public class CerealHttpService(HttpClient httpClient)
     {
         using var response = await client.DeleteAsync(URL_ID(id));
         response.EnsureSuccessStatusCode();
+    }
+
+    public async Task RestoreCereal(int id)
+    {
+        throw new NotImplementedException();
     }
 }
