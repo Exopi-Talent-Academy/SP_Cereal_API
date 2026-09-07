@@ -130,4 +130,11 @@ public class CerealController(ICerealService cerealService) : ControllerBase
             return NotFound();
         }
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("{id}/restore", Name = "RestoreCereal")]
+    public IActionResult Restore(int id)
+    {
+        throw new NotImplementedException();
+    }
 }

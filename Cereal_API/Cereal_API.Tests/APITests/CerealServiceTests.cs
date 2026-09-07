@@ -287,32 +287,32 @@ public sealed class CerealServiceTests
     }
 
     [TestMethod]
-    public void DeleteCereal_ExistingId_RemovesCereal()
+    public void DeleteCereal_ExistingId_MarksCerealAsDeleted()
     {
         // Arrange
-        int deletedId = 2;
+        int idToDelete = 2;
+        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
 
         using var context = FakeDbContext.Create();
         context.AddRange(
-            new CerealData { Id = 1, Name = "A" },
-            new CerealData { Id = 2, Name = "B" },
-            new CerealData { Id = 3, Name = "C" }
+            new CerealData { Id = 1, Name = "A", DbVersion = oldVersion },
+            new CerealData { Id = 2, Name = "B", DbVersion = oldVersion },
+            new CerealData { Id = 3, Name = "C", DbVersion = oldVersion }
             );
         context.SaveChanges();
 
         var service = new CerealService(context);
 
         // Act
-        service.DeleteCereal(deletedId);
-        var all = service.GetAllCereals();
+        service.DeleteCereal(idToDelete);
+        DateTime newVersion = DateTime.UtcNow;
+        var actual = service.GetCereal(idToDelete);
 
         // Assert
-        Assert.IsNotNull(all);
-        Assert.HasCount(2, all);
-        Assert.AreEqual(1, all[0].Id);
-        Assert.AreEqual(3, all[1].Id);
-        Assert.AreNotEqual(deletedId, all[1].Id);
-        Assert.ThrowsExactly<KeyNotFoundException>(() => service.GetCereal(deletedId));
+        Assert.IsNotNull(actual);
+        Assert.AreEqual(idToDelete, actual.Id);
+        Assert.IsTrue(actual.MarkedAsDeleted);
+        Assert.AreEqual(newVersion.Date, actual.DbVersion?.Date);
     }
 
     [TestMethod]
@@ -324,5 +324,45 @@ public sealed class CerealServiceTests
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.DeleteCereal(1));
+    }
+
+    [TestMethod]
+    public void RestoreCereal_ExistingId_RemovesMarkedAsDelete()
+    {
+        // Arrange
+        int deletedId = 2;
+        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
+
+        using var context = FakeDbContext.Create();
+        context.AddRange(
+            new CerealData { Id = 1, Name = "A", DbVersion = oldVersion },
+            new CerealData { Id = 2, Name = "B", DbVersion = oldVersion, MarkedAsDeleted = true },
+            new CerealData { Id = 3, Name = "C", DbVersion = oldVersion }
+            );
+        context.SaveChanges();
+
+        var service = new CerealService(context);
+
+        // Act
+        service.RestoreCereal(deletedId);
+        DateTime newVersion = DateTime.UtcNow;
+        var actual = service.GetCereal(deletedId);
+
+        // Assert
+        Assert.IsNotNull(actual);
+        Assert.AreEqual(deletedId, actual.Id);
+        Assert.IsFalse(actual.MarkedAsDeleted);
+        Assert.AreEqual(newVersion.Date, actual.DbVersion?.Date);
+    }
+
+    [TestMethod]
+    public void RestoreCereal_InvalidId_ThrowsKeyNotFound()
+    {
+        // Arrange
+        using var context = FakeDbContext.Create();
+        var service = new CerealService(context);
+
+        // Act & Assert
+        Assert.ThrowsExactly<KeyNotFoundException>(() => service.RestoreCereal(1));
     }
 }

@@ -20,4 +20,5 @@ public class CerealData
     public float Cups { get; set; }
     public float Rating { get; set; }
     public DateTime? DbVersion { get; set; } = null;
+    public bool MarkedAsDeleted { get; set; } = false;
 }

@@ -17,4 +17,6 @@ public interface ICerealService
     void UpdateCereal(CerealData cereal);
 
     void DeleteCereal(int id);
+
+    void RestoreCereal(int id);
 }

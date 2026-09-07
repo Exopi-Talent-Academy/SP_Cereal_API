@@ -317,4 +317,39 @@ public class CerealControllerTests
         // Assert
         Assert.IsInstanceOfType<NotFoundResult>(actual);
     }
+
+    [TestMethod]
+    public void Restore_ExistingId_ReturnsOK()
+    {
+        // Arrange
+        int id = 1;
+
+        var service = new Mock<ICerealService>();
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Restore(id);
+
+        // Assert
+        Assert.IsInstanceOfType<OkResult>(actual);
+        service.Verify(x => x.RestoreCereal(id), Times.Once);
+    }
+
+    [TestMethod]
+    public void Restore_InvalidId_ReturnNotFound()
+    {
+        // Arrange
+        int id = 1;
+
+        var service = new Mock<ICerealService>();
+        service.Setup(s => s.RestoreCereal(id)).Throws<KeyNotFoundException>();
+
+        var controller = new CerealController(service.Object);
+
+        // Act
+        var actual = controller.Restore(id);
+
+        // Assert
+        Assert.IsInstanceOfType<NotFoundResult>(actual);
+    }
 }
