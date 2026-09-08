@@ -123,6 +123,7 @@ public class CerealHttpService(HttpClient httpClient)
 
     public async Task RestoreCereal(int id)
     {
-        throw new NotImplementedException();
+        using var response = await client.PostAsync(URL_ID_RESTORE(id), null);
+        response.EnsureSuccessStatusCode();
     }
 }
