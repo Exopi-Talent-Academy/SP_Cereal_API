@@ -42,6 +42,11 @@ public static class MessageBoxHelper
         return Confirm($"You about to delete \"{subject}\" from the database! {AreYouSure}", $"Confirm Delete");
     }
 
+    public static bool ConfirmRestore(string subject)
+    {
+        return Confirm($"You about to restore \"{subject}\" to the database! {AreYouSure}", $"Confirm Restore");
+    }
+
     public static void ShowError(string errorMessage, string errorCaption = "Error!", [CallerMemberName] string? methodName = null)
     {
         MessageBox.Show($"{methodName} threw the following error:\n{errorMessage}", $"{methodName} {errorCaption}", MessageBoxButton.OK, MessageBoxImage.Error);

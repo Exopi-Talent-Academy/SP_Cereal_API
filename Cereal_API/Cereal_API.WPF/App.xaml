@@ -61,6 +61,15 @@
             </Style.Triggers>
         </Style>
 
+        <Style TargetType="DataGridCell">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding MarkedAsDeleted}" Value="True">
+                    <Setter Property="Foreground" Value="Gray"/>
+                    <Setter Property="Background" Value="LightGray"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="LoginTextBlock" TargetType="TextBlock">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="FontWeight" Value="Bold"/>

@@ -202,6 +202,11 @@
                                         CommandParameter="{Binding}"
                                         Visibility="{Binding ShowDelete, Converter={StaticResource BoolToVisibility}}"/>
 
+                                <Button Content="Restore"
+                                        Command="{Binding DataContext.RestoreCerealCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                        CommandParameter="{Binding}"
+                                        Visibility="{Binding ShowRestore, Converter={StaticResource BoolToVisibility}}"/>
+
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

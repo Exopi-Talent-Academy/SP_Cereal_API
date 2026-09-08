@@ -268,6 +268,20 @@ public class CerealRowViewModel : ViewModelBase
     }
     #endregion
 
+    public bool MarkedAsDeleted
+    {
+        get => Cereal.MarkedAsDeleted;
+        set
+        {
+            if (Cereal.MarkedAsDeleted == value)
+                return;
+
+            Cereal.MarkedAsDeleted = value;
+
+            OnPropertyChanged();
+        }
+    }
+
     public byte[] Image { get; private set; }
 
     public bool IsNew { get; set; }
@@ -284,14 +298,15 @@ public class CerealRowViewModel : ViewModelBase
 
             _isModified = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(ShowUpdate));
-            OnPropertyChanged(nameof(ShowDelete));
+            RefreshShowStates();
         }
     }
 
+    public bool Show => !MarkedAsDeleted || _authenticationState.RoleHasDeletePermission;
     public bool ShowSave => IsNew && _authenticationState.RoleHasEditPermission;
-    public bool ShowUpdate => !IsNew && IsModified && _authenticationState.RoleHasEditPermission;
-    public bool ShowDelete => !IsNew && !IsModified && _authenticationState.RoleHasDeletePermission;
+    public bool ShowUpdate => !IsNew && IsModified && !MarkedAsDeleted && _authenticationState.RoleHasEditPermission;
+    public bool ShowDelete => !IsNew && !IsModified && !MarkedAsDeleted && _authenticationState.RoleHasDeletePermission;
+    public bool ShowRestore => !IsNew && !IsModified && MarkedAsDeleted && _authenticationState.RoleHasDeletePermission;
 
     public CerealRowViewModel(AuthenticationState authenticationState, CerealData cereal, byte[] image, bool isNew = false)
     {
@@ -328,16 +343,28 @@ public class CerealRowViewModel : ViewModelBase
 
     private void MakeModifiable()
     {
+        if (MarkedAsDeleted)
+        {
+            RevertToOriginal();
+            return;
+        }
+
         IsModified = !Cereal.IsEqual(Original);
+    }
+
+    private void RefreshShowStates()
+    {
+        OnPropertyChanged(nameof(ShowSave));
+        OnPropertyChanged(nameof(ShowUpdate));
+        OnPropertyChanged(nameof(ShowDelete));
+        OnPropertyChanged(nameof(ShowRestore));
     }
 
     private void AuthenticationState_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(AuthenticationState.IsLoggedIn))
         {
-            OnPropertyChanged(nameof(ShowSave));
-            OnPropertyChanged(nameof(ShowUpdate));
-            OnPropertyChanged(nameof(ShowDelete));
+            RefreshShowStates();
         }
     }
 }

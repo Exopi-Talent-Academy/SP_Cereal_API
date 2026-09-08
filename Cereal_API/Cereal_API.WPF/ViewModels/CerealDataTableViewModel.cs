@@ -77,6 +77,7 @@ public class CerealDataTableViewModel : ViewModelBase
     public RelayCommand UpdateModifiedCerealCommand { get; private set; }
     public RelayCommand CancelModifiedCerealCommand { get; private set; }
     public RelayCommand DeleteCerealCommand { get; private set; }
+    public RelayCommand RestoreCerealCommand { get; private set; }
 
     public CerealEnums.Manufacturer[] ManufacturerOptions { get; private set; }
 
@@ -151,6 +152,10 @@ public class CerealDataTableViewModel : ViewModelBase
 
         DeleteCerealCommand = new RelayCommand(
             execute: parameter => DeleteCereal((CerealRowViewModel)parameter!),
+            canExecute: parameter => parameter is CerealRowViewModel);
+
+        RestoreCerealCommand = new RelayCommand(
+            execute: parameter => RestoreCereal((CerealRowViewModel)parameter!),
             canExecute: parameter => parameter is CerealRowViewModel);
     }
 
@@ -284,7 +289,24 @@ public class CerealDataTableViewModel : ViewModelBase
         {
             await _api.DeleteCereal(row.Cereal.Id);
 
-            AllCereals.Remove(row);
+            row.MarkedAsDeleted = true;
+            ApplyFilters();
+        }
+        catch (HttpRequestException ex)
+        {
+            MessageBoxHelper.ShowError(ex.Message);
+        }
+    }
+
+    private async void RestoreCereal(CerealRowViewModel row)
+    {
+        if (!MessageBoxHelper.ConfirmRestore(row.Cereal.Name))
+            return;
+        try
+        {
+            await _api.RestoreCereal(row.Cereal.Id);
+
+            row.MarkedAsDeleted = false;
             ApplyFilters();
         }
         catch (HttpRequestException ex)
@@ -324,6 +346,7 @@ public class CerealDataTableViewModel : ViewModelBase
 
         var results = AllCereals
             .Where(row =>
+                row.Show && 
                 activeFilters.All(filter =>
                     CerealFilter.Matches(row.Cereal, filter)))
             .ToList();
@@ -342,6 +365,7 @@ public class CerealDataTableViewModel : ViewModelBase
         {
             OnPropertyChanged(nameof(IsLoggedIn));
             OnPropertyChanged(nameof(CanModifyTable));
+            ApplyFilters();
         }
     }
 }
