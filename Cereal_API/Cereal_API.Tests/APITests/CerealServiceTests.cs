@@ -117,8 +117,8 @@ public sealed class CerealServiceTests
     }
 
     [TestMethod]
-    [DataRow(0)]    // Valid Id
-    [DataRow(15)]   // Invalid Id
+    [DataRow(0)]
+    [DataRow(15)]
     public void CreateCereal_AddsCereal(int id)
     {
         // Arrange
@@ -132,24 +132,21 @@ public sealed class CerealServiceTests
         var service = new CerealService(context);
 
         // Act
-        service.CreateCereal(newCereal);
-        DateTime dbVersion = DateTime.UtcNow;
-        var all = service.GetAllCereals();
+        var actual = service.CreateCereal(newCereal);
 
         // Assert
-        Assert.IsNotNull(all);
-        Assert.HasCount(1, all);
-        Assert.AreEqual(expectedName, all[0].Name);
-        Assert.AreEqual(expectedId, all[0].Id);
-        Assert.AreEqual(dbVersion.Date, all[0].DbVersion?.Date);
-        Assert.AreNotEqual(id, all[0].Id);
+        Assert.IsNotNull(actual);
+        Assert.AreEqual(expectedName, actual.Name);
+        Assert.AreEqual(expectedId, actual.Id);
+        Assert.AreEqual(DateTime.UtcNow.Date, actual.DbVersion?.Date);
+        Assert.AreNotEqual(id, actual.Id);
     }
 
     [TestMethod]
-    [DataRow("", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, 100)]
-    [DataRow("A", (CerealEnums.Manufacturer)999, (CerealEnums.Type)0, 100)]
-    [DataRow("A", (CerealEnums.Manufacturer)0, (CerealEnums.Type)999, 100)]
-    [DataRow("A", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, -1)]
+    [DataRow("", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, 100)]    // Invalid Name
+    [DataRow("A", (CerealEnums.Manufacturer)999, (CerealEnums.Type)0, 100)] // Invalid Manufacturer
+    [DataRow("A", (CerealEnums.Manufacturer)0, (CerealEnums.Type)999, 100)] // Invalid Type
+    [DataRow("A", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, -1)]    // Invalid Number
     public void CreateCereal_FailingValidation_ThrowsArgumentException(string name, CerealEnums.Manufacturer manufacturer, CerealEnums.Type type, int calories)
     {
         // Arrange
@@ -197,10 +194,10 @@ public sealed class CerealServiceTests
     }
 
     [TestMethod]
-    [DataRow("", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, 100)]
-    [DataRow("B", (CerealEnums.Manufacturer)999, (CerealEnums.Type)0, 100)]
-    [DataRow("B", (CerealEnums.Manufacturer)0, (CerealEnums.Type)999, 100)]
-    [DataRow("B", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, -1)]
+    [DataRow("", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, 100)]    // Invalid Name
+    [DataRow("B", (CerealEnums.Manufacturer)999, (CerealEnums.Type)0, 100)] // Invalid Manufacturer
+    [DataRow("B", (CerealEnums.Manufacturer)0, (CerealEnums.Type)999, 100)] // Invalid Type
+    [DataRow("B", (CerealEnums.Manufacturer)0, (CerealEnums.Type)0, -1)]    // Invalid Number
     public void CreateCereals_FailingValidation_ThrowsArgumentException(string name, CerealEnums.Manufacturer manufacturer, CerealEnums.Type type, int calories)
     {
         // Arrange
@@ -224,31 +221,28 @@ public sealed class CerealServiceTests
     public void UpdateCereal_ExistingId_UpdatesValues()
     {
         // Arrange
-        int expectedId = 1;
+        int id = 1;
         string oldName = "Old";
-        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
+        DateTime dbVersion = DateTime.UtcNow.AddDays(-5);
 
         using var context = FakeDbContext.Create();
-        context.Add(new CerealData { Id = expectedId, Name = oldName, DbVersion = oldVersion });
+        context.Add(new CerealData { Id = id, Name = oldName, DbVersion = dbVersion });
         context.SaveChanges();
 
         string updatedName = "Updated";
-        CerealData updatedCereal = new() { Id = expectedId, Name = updatedName, DbVersion = oldVersion };
+        CerealData updatedCereal = new() { Id = id, Name = updatedName, DbVersion = dbVersion };
 
         var service = new CerealService(context);
 
         // Act
-        service.UpdateCereal(updatedCereal);
-        DateTime newVersion = DateTime.UtcNow;
-        var result = service.GetCereal(expectedId);
+        var actual = service.UpdateCereal(updatedCereal);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(expectedId, result.Id);
-        Assert.AreEqual(updatedName, result.Name);
-        Assert.AreEqual(newVersion.Date, result.DbVersion?.Date);
-        Assert.AreNotEqual(oldName, result.Name);
-        Assert.AreNotEqual(oldVersion, result.DbVersion);
+        Assert.IsNotNull(actual);
+        Assert.AreEqual(id, actual.Id);
+        Assert.AreEqual(updatedName, actual.Name);
+        Assert.AreNotEqual(dbVersion.Date, actual.DbVersion?.Date);
+        Assert.AreNotEqual(oldName, actual.Name);
     }
 
     [TestMethod]
@@ -270,14 +264,13 @@ public sealed class CerealServiceTests
     public void UpdateCereal_ConcurrentUpdate_ReturnsInvalidOperationException()
     {
         // Arrange
-        int expectedId = 1;
-        string oldName = "Old";
-        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
+        int id = 1;
+        DateTime dbVersion = DateTime.UtcNow.AddDays(-5);
 
-        CerealData newCereal = new() { Id = expectedId, Name = "Updated", DbVersion = oldVersion };
+        CerealData newCereal = new() { Id = id, Name = "Updated", DbVersion = dbVersion };
 
         using var context = FakeDbContext.Create();
-        context.Add(new CerealData { Id = expectedId, Name = oldName, DbVersion = oldVersion.AddDays(2) });
+        context.Add(new CerealData { Id = id, Name = "Old", DbVersion = dbVersion.AddDays(2) });
         context.SaveChanges();
 
         var service = new CerealService(context);
@@ -291,28 +284,26 @@ public sealed class CerealServiceTests
     {
         // Arrange
         int idToDelete = 2;
-        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
+        DateTime dbVersion = DateTime.UtcNow.AddDays(-5);
 
         using var context = FakeDbContext.Create();
         context.AddRange(
-            new CerealData { Id = 1, Name = "A", DbVersion = oldVersion },
-            new CerealData { Id = 2, Name = "B", DbVersion = oldVersion },
-            new CerealData { Id = 3, Name = "C", DbVersion = oldVersion }
+            new CerealData { Id = 1, Name = "A", DbVersion = dbVersion },
+            new CerealData { Id = 2, Name = "B", DbVersion = dbVersion },
+            new CerealData { Id = 3, Name = "C", DbVersion = dbVersion }
             );
         context.SaveChanges();
 
         var service = new CerealService(context);
 
         // Act
-        service.DeleteCereal(idToDelete);
-        DateTime newVersion = DateTime.UtcNow;
-        var actual = service.GetCereal(idToDelete);
+        var actual = service.DeleteCereal(idToDelete);
 
         // Assert
         Assert.IsNotNull(actual);
         Assert.AreEqual(idToDelete, actual.Id);
         Assert.IsTrue(actual.MarkedAsDeleted);
-        Assert.AreEqual(newVersion.Date, actual.DbVersion?.Date);
+        Assert.AreNotEqual(dbVersion.Date, actual.DbVersion?.Date);
     }
 
     [TestMethod]
@@ -331,28 +322,26 @@ public sealed class CerealServiceTests
     {
         // Arrange
         int deletedId = 2;
-        DateTime oldVersion = DateTime.UtcNow.AddDays(-5);
+        DateTime dbVersion = DateTime.UtcNow.AddDays(-5);
 
         using var context = FakeDbContext.Create();
         context.AddRange(
-            new CerealData { Id = 1, Name = "A", DbVersion = oldVersion },
-            new CerealData { Id = 2, Name = "B", DbVersion = oldVersion, MarkedAsDeleted = true },
-            new CerealData { Id = 3, Name = "C", DbVersion = oldVersion }
+            new CerealData { Id = 1, Name = "A", DbVersion = dbVersion },
+            new CerealData { Id = 2, Name = "B", DbVersion = dbVersion, MarkedAsDeleted = true },
+            new CerealData { Id = 3, Name = "C", DbVersion = dbVersion }
             );
         context.SaveChanges();
 
         var service = new CerealService(context);
 
         // Act
-        service.RestoreCereal(deletedId);
-        DateTime newVersion = DateTime.UtcNow;
-        var actual = service.GetCereal(deletedId);
+        var actual = service.RestoreCereal(deletedId);
 
         // Assert
         Assert.IsNotNull(actual);
         Assert.AreEqual(deletedId, actual.Id);
         Assert.IsFalse(actual.MarkedAsDeleted);
-        Assert.AreEqual(newVersion.Date, actual.DbVersion?.Date);
+        Assert.AreNotEqual(dbVersion.Date, actual.DbVersion?.Date);
     }
 
     [TestMethod]

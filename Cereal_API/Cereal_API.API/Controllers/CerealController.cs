@@ -68,8 +68,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     {
         try
         {
-            cerealService.CreateCereal(data);
-            return Ok();
+            return Ok(cerealService.CreateCereal(data));
         }
         catch
         {
@@ -103,8 +102,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     {
         try
         {
-            cerealService.UpdateCereal(data);
-            return Ok();
+            return Ok(cerealService.UpdateCereal(data));
         }
         catch (InvalidOperationException)
         {
@@ -122,8 +120,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     {
         try
         {
-            cerealService.DeleteCereal(id);
-            return NoContent();
+            return Ok(cerealService.DeleteCereal(id));
         }
         catch (KeyNotFoundException)
         {
@@ -137,8 +134,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
     {
         try
         {
-            cerealService.RestoreCereal(id);
-            return Ok();
+            return Ok(cerealService.RestoreCereal(id));
         }
         catch (KeyNotFoundException)
         {

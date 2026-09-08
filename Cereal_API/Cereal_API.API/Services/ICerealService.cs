@@ -10,13 +10,13 @@ public interface ICerealService
 
     (byte[] Data, string ContentType) GetImage(int id);
 
-    void CreateCereal(CerealData cereal);
+    CerealData CreateCereal(CerealData cereal);
 
     void CreateCereals(List<CerealData> cereals);
 
-    void UpdateCereal(CerealData cereal);
+    CerealData UpdateCereal(CerealData cereal);
 
-    void DeleteCereal(int id);
+    CerealData DeleteCereal(int id);
 
-    void RestoreCereal(int id);
+    CerealData RestoreCereal(int id);
 }

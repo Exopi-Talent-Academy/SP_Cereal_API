@@ -33,6 +33,7 @@ public static class CerealDataExtensions
 
     public static void SetValues(this CerealData original, CerealData newData)
     {
+        original.Id = newData.Id;
         original.Name = newData.Name;
         original.Manufacturer = newData.Manufacturer;
         original.Type = newData.Type;

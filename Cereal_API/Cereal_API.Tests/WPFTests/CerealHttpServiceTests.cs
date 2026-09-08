@@ -223,24 +223,23 @@ public class CerealHttpServiceTests
     }
 
     [TestMethod]
-    public async Task CreateCereal_POSTRequest_ReturnsJSONBody()
+    public async Task CreateCereal_POSTRequest_ReturnsCreatedCereal()
     {
         // Arrange
         var cereal = new CerealData { Id = 0, Name = "A Very Long And Convoluted Name" };
 
-        var handler = FakeHttpMessageHandler.Create();
+        var handler = FakeHttpMessageHandler.CreateFor(cereal);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
         // Act
-        await service.CreateCereal(cereal);
+        var actual = await service.CreateCereal(cereal);
 
         // Assert
         Assert.AreEqual(HttpMethod.Post, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
         
-        var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
-        Assert.Contains(cereal.Name, json);
+        Assert.AreEqual(cereal.Name, actual.Name);
     }
 
     [TestMethod]
@@ -284,24 +283,23 @@ public class CerealHttpServiceTests
     }
 
     [TestMethod]
-    public async Task UpdateCereal_PUTRequest_ReturnsJSONBody()
+    public async Task UpdateCereal_PUTRequest_ReturnsUpdatedCereal()
     {
         // Arrange
         var cereal = new CerealData { Id = 1, Name = "A Very Long And Convoluted Name" };
 
-        var handler = FakeHttpMessageHandler.Create();
+        var handler = FakeHttpMessageHandler.CreateFor(cereal);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
         // Act
-        await service.UpdateCereal(cereal);
+        var actual = await service.UpdateCereal(cereal);
 
         // Assert
         Assert.AreEqual(HttpMethod.Put, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL, handler.Request.RequestUri!.ToString());
 
-        var json = await handler.Request.Content!.ReadAsStringAsync(CancellationToken.None);
-        Assert.Contains(cereal.Name, json);
+        Assert.AreEqual(cereal.Name, actual.Name);
     }
 
     [TestMethod]
@@ -319,21 +317,24 @@ public class CerealHttpServiceTests
     }
 
     [TestMethod]
-    public async Task DeleteCereal_DELETERequest_ReturnsSucceeds()
+    public async Task DeleteCereal_DELETERequest_ReturnsMarkedAsDeletedCereal()
     {
         // Arrange
         var id = 1;
+        var cereal = new CerealData { Id = id, Name = "A", MarkedAsDeleted = true };
 
-        var handler = FakeHttpMessageHandler.Create(HttpStatusCode.NoContent);
+        var handler = FakeHttpMessageHandler.CreateFor(cereal);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
         // Act
-        await service.DeleteCereal(id);
+        var actual = await service.DeleteCereal(id);
 
         // Assert
         Assert.AreEqual(HttpMethod.Delete, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL_ID(id), handler.Request.RequestUri!.ToString());
+
+        Assert.AreEqual(cereal.MarkedAsDeleted, actual.MarkedAsDeleted);
     }
 
     [TestMethod]
@@ -353,17 +354,20 @@ public class CerealHttpServiceTests
     {
         // Arrange
         var id = 1;
+        var cereal = new CerealData { Id = id, Name = "A", MarkedAsDeleted = false };
 
-        var handler = FakeHttpMessageHandler.Create();
+        var handler = FakeHttpMessageHandler.CreateFor(cereal);
         var client = CreateClient(handler);
         var service = new CerealHttpService(client);
 
         // Act
-        await service.RestoreCereal(id);
+        var actual = await service.RestoreCereal(id);
 
         // Assert
         Assert.AreEqual(HttpMethod.Post, handler.Request!.Method);
         Assert.AreEqual(baseUrl + CerealHttpService.URL_ID_RESTORE(id), handler.Request.RequestUri!.ToString());
+
+        Assert.AreEqual(cereal.MarkedAsDeleted, actual.MarkedAsDeleted);
     }
 
     [TestMethod]

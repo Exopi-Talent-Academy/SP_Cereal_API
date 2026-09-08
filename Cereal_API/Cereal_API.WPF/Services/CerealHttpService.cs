@@ -88,10 +88,12 @@ public class CerealHttpService(HttpClient httpClient)
         }
     }
 
-    public async Task CreateCereal(CerealData cereal)
+    public async Task<CerealData> CreateCereal(CerealData cereal)
     {
         using var response = await client.PostAsJsonAsync(URL, cereal);
         response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<CerealData>() ?? new();
     }
 
     public async Task<List<ErrorReport>> CreateCereals(string filePath)
@@ -109,21 +111,27 @@ public class CerealHttpService(HttpClient httpClient)
         return await response.Content.ReadFromJsonAsync<List<ErrorReport>>() ?? [];
     }
 
-    public async Task UpdateCereal(CerealData cereal)
+    public async Task<CerealData> UpdateCereal(CerealData cereal)
     {
         using var response = await client.PutAsJsonAsync(URL, cereal);
         response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<CerealData>() ?? new();
     }
 
-    public async Task DeleteCereal(int id)
+    public async Task<CerealData> DeleteCereal(int id)
     {
         using var response = await client.DeleteAsync(URL_ID(id));
         response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<CerealData>() ?? new();
     }
 
-    public async Task RestoreCereal(int id)
+    public async Task<CerealData> RestoreCereal(int id)
     {
         using var response = await client.PostAsync(URL_ID_RESTORE(id), null);
         response.EnsureSuccessStatusCode();
+
+        return await response.Content.ReadFromJsonAsync<CerealData>() ?? new();
     }
 }

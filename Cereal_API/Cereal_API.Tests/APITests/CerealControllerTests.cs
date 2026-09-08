@@ -181,7 +181,7 @@ public class CerealControllerTests
         var actual = controller.Create(newCereal);
 
         // Assert
-        Assert.IsInstanceOfType<OkResult>(actual);
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
         service.Verify(x => x.CreateCereal(newCereal), Times.Once);
     }
 
@@ -243,7 +243,7 @@ public class CerealControllerTests
         var actual = controller.Update(newCereal);
 
         // Assert
-        Assert.IsInstanceOfType<OkResult>(actual);
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
         service.Verify(x => x.UpdateCereal(newCereal), Times.Once);
     }
 
@@ -284,7 +284,7 @@ public class CerealControllerTests
     }
 
     [TestMethod]
-    public void Delete_ExistingId_ReturnsNoContent()
+    public void Delete_ExistingId_ReturnsOk()
     {
         // Arrange
         int id = 1;
@@ -296,7 +296,7 @@ public class CerealControllerTests
         var actual = controller.Delete(id);
 
         // Assert
-        Assert.IsInstanceOfType<NoContentResult>(actual);
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
         service.Verify(x => x.DeleteCereal(id), Times.Once);
     }
 
@@ -331,7 +331,7 @@ public class CerealControllerTests
         var actual = controller.Restore(id);
 
         // Assert
-        Assert.IsInstanceOfType<OkResult>(actual);
+        Assert.IsInstanceOfType<OkObjectResult>(actual);
         service.Verify(x => x.RestoreCereal(id), Times.Once);
     }
 

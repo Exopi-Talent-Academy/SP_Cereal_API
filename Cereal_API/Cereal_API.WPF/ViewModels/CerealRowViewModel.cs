@@ -320,24 +320,17 @@ public class CerealRowViewModel : ViewModelBase
         _authenticationState.PropertyChanged += AuthenticationState_PropertyChanged;
     }
 
-    public void SaveNew(int newID)
+    public void UpdateFromDb(CerealData dbCereal)
     {
-        Id = newID;
+        Cereal.SetValues(dbCereal);
+        Original.SetValues(dbCereal);
         IsNew = false;
-
-        OnPropertyChanged(nameof(ShowSave));
-        OverrideOriginal();
+        IsModified = false;
     }
 
     public void RevertToOriginal()
     {
         Cereal.SetValues(Original);
-        IsModified = false;
-    }
-
-    public void OverrideOriginal()
-    {
-        Original.SetValues(Cereal);
         IsModified = false;
     }
 

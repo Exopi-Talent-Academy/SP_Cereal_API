@@ -224,9 +224,7 @@ public class CerealDataTableViewModel : ViewModelBase
 
         try
         {
-            await _api.CreateCereal(row.Cereal);
-
-            row.SaveNew(AllCereals.Max(c => c.Id) + 1); // The new ID isn't calculated correctly if the newest entry in the database was deleted!
+            row.UpdateFromDb(await _api.CreateCereal(row.Cereal));
             ApplyFilters();
         }
         catch (HttpRequestException ex)
@@ -251,9 +249,7 @@ public class CerealDataTableViewModel : ViewModelBase
 
         try
         {
-            await _api.UpdateCereal(row.Cereal);
-
-            row.OverrideOriginal();
+            row.UpdateFromDb(await _api.UpdateCereal(row.Cereal));
             ApplyFilters();
         }
         catch (HttpRequestException ex)
@@ -287,9 +283,7 @@ public class CerealDataTableViewModel : ViewModelBase
 
         try
         {
-            await _api.DeleteCereal(row.Cereal.Id);
-
-            row.MarkedAsDeleted = true;
+            row.UpdateFromDb(await _api.DeleteCereal(row.Cereal.Id));
             ApplyFilters();
         }
         catch (HttpRequestException ex)
@@ -304,9 +298,7 @@ public class CerealDataTableViewModel : ViewModelBase
             return;
         try
         {
-            await _api.RestoreCereal(row.Cereal.Id);
-
-            row.MarkedAsDeleted = false;
+            row.UpdateFromDb(await _api.RestoreCereal(row.Cereal.Id));
             ApplyFilters();
         }
         catch (HttpRequestException ex)

@@ -41,7 +41,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
         return (File.ReadAllBytes(imagePath), contentType);
     }
 
-    public void CreateCereal(CerealData cereal)
+    public CerealData CreateCereal(CerealData cereal)
     {
         cereal.Validate();
 
@@ -49,6 +49,8 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
         cereal.DbVersion = DateTime.UtcNow;
         _db.Cereals.Add(cereal);
         _db.SaveChanges();
+        
+        return cereal;
     }
 
     public void CreateCereals(List<CerealData> cereals)
@@ -64,38 +66,44 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
         _db.SaveChanges();
     }
 
-    public void UpdateCereal(CerealData cereal)
+    public CerealData UpdateCereal(CerealData cereal)
     {
-        CerealData existingCereal = GetCereal(cereal.Id);
+        CerealData dbCereal = GetCereal(cereal.Id);
         
-        if (existingCereal.DbVersion != cereal.DbVersion)
+        if (dbCereal.DbVersion != cereal.DbVersion)
             throw new InvalidOperationException();
 
-        if (existingCereal.IsEqual(cereal))
-            return;
+        if (dbCereal.IsEqual(cereal))
+            return dbCereal;
 
         cereal.DbVersion = DateTime.UtcNow;
-        _db.Cereals.Entry(existingCereal).CurrentValues.SetValues(cereal);
+        _db.Cereals.Entry(dbCereal).CurrentValues.SetValues(cereal);
         _db.SaveChanges();
+
+        return dbCereal;
     }
 
-    public void DeleteCereal(int id)
+    public CerealData DeleteCereal(int id)
     {
-        CerealData existingCereal = GetCereal(id);
+        CerealData dbCereal = GetCereal(id);
 
-        existingCereal.MarkedAsDeleted = true;
-        existingCereal.DbVersion = DateTime.UtcNow;
-        _db.Cereals.Update(existingCereal);
+        dbCereal.MarkedAsDeleted = true;
+        dbCereal.DbVersion = DateTime.UtcNow;
+        _db.Cereals.Update(dbCereal);
         _db.SaveChanges();
+
+        return dbCereal;
     }
 
-    public void RestoreCereal(int id)
+    public CerealData RestoreCereal(int id)
     {
-        CerealData existingCereal = GetCereal(id);
+        CerealData dbCereal = GetCereal(id);
 
-        existingCereal.MarkedAsDeleted = false;
-        existingCereal.DbVersion = DateTime.UtcNow;
-        _db.Cereals.Update(existingCereal);
+        dbCereal.MarkedAsDeleted = false;
+        dbCereal.DbVersion = DateTime.UtcNow;
+        _db.Cereals.Update(dbCereal);
         _db.SaveChanges();
+
+        return dbCereal;
     }
 }
