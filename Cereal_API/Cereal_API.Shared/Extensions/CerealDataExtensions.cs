@@ -1,4 +1,5 @@
 ﻿using Cereal_API.Shared.Models;
+using System.Text;
 
 namespace Cereal_API.Shared.Extensions;
 
@@ -52,6 +53,7 @@ public static class CerealDataExtensions
         original.Rating = newData.Rating;
         original.DbVersion = newData.DbVersion;
         original.MarkedAsDeleted = newData.MarkedAsDeleted;
+        original.ChangeHistory = newData.ChangeHistory;
     }
 
     public static CerealData Clone(this CerealData original)
@@ -77,6 +79,7 @@ public static class CerealDataExtensions
             Rating = original.Rating,
             DbVersion = original.DbVersion,
             MarkedAsDeleted = original.MarkedAsDeleted,
+            ChangeHistory = original.ChangeHistory,
         };
     }
 
@@ -102,5 +105,59 @@ public static class CerealDataExtensions
             original.Rating == other.Rating &&
             original.DbVersion == other.DbVersion &&
             original.MarkedAsDeleted == other.MarkedAsDeleted;
+    }
+
+    public static void AddCreatedChangeHistory(this CerealData cereal, string user)
+    {
+        cereal.ChangeHistory.Add($"{GetTimeAndUserInfo(user)} created the cereal.");
+    }
+
+    public static void AddUpdatedChangeHistory(this CerealData cereal, CerealData original, string user)
+    {
+        if (cereal.IsEqual(original))
+            return;
+
+        StringBuilder changes = new($"{GetTimeAndUserInfo(user)} updated the following fields: ");
+        changes.GetChangeDescription(nameof(cereal.Name), original.Name, cereal.Name);
+        changes.GetChangeDescription(nameof(cereal.Manufacturer), original.Manufacturer, cereal.Manufacturer);
+        changes.GetChangeDescription(nameof(cereal.Type), original.Type, cereal.Type);
+        changes.GetChangeDescription(nameof(cereal.Calories), original.Calories, cereal.Calories);
+        changes.GetChangeDescription(nameof(cereal.Protein), original.Protein, cereal.Protein);
+        changes.GetChangeDescription(nameof(cereal.Fat), original.Fat, cereal.Fat);
+        changes.GetChangeDescription(nameof(cereal.Sodium), original.Sodium, cereal.Sodium);
+        changes.GetChangeDescription(nameof(cereal.Fiber), original.Fiber, cereal.Fiber);
+        changes.GetChangeDescription(nameof(cereal.Carbo), original.Carbo, cereal.Carbo);
+        changes.GetChangeDescription(nameof(cereal.Sugars), original.Sugars, cereal.Sugars);
+        changes.GetChangeDescription(nameof(cereal.Potass), original.Potass, cereal.Potass);
+        changes.GetChangeDescription(nameof(cereal.Vitamins), original.Vitamins, cereal.Vitamins);
+        changes.GetChangeDescription(nameof(cereal.Shelf), original.Shelf, cereal.Shelf);
+        changes.GetChangeDescription(nameof(cereal.Weight), original.Weight, cereal.Weight);
+        changes.GetChangeDescription(nameof(cereal.Cups), original.Cups, cereal.Cups);
+        changes.GetChangeDescription(nameof(cereal.Rating), original.Rating, cereal.Rating);
+
+        cereal.ChangeHistory.Add(changes.ToString().TrimEnd());
+    }
+
+    public static void AddDeletedChangeHistory(this CerealData cereal, string user)
+    {
+        cereal.ChangeHistory.Add($"{GetTimeAndUserInfo(user)} deleted the cereal.");
+    }
+
+    public static void AddRestoredChangeHistory(this CerealData cereal, string user)
+    {
+        cereal.ChangeHistory.Add($"{GetTimeAndUserInfo(user)} restored the cereal.");
+    }
+
+    private static string GetTimeAndUserInfo(string user)
+    {
+        return $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC - {user}";
+    }
+
+    private static void GetChangeDescription(this StringBuilder builder, string propertyName, object originalValue, object newValue)
+    {
+        if (!Equals(originalValue, newValue))
+        {
+            builder.Append($"\n{propertyName}: '{originalValue}' -> '{newValue}' ");
+        }
     }
 }

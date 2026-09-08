@@ -90,6 +90,7 @@ public static class CsvImporter
             Cups = float.Parse(values[14], CultureInfo.InvariantCulture),
             Rating = float.Parse(values[15], CultureInfo.InvariantCulture),
             DbVersion = DateTime.UtcNow,
+            ChangeHistory = [$"Imported from CSV at {DateTime.UtcNow} UTC"]
         };
         cereal.Validate();
         

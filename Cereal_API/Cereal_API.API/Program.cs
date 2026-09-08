@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add authentication
 builder.Services.AddAuthentication("Basic").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Basic", null);
 builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
 
 // Add SQLite database service
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(AppDbContext.ConnectionPath));
@@ -17,7 +18,7 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(AppDbCo
 var imageFolder = Path.Combine(builder.Environment.ContentRootPath, "Database", builder.Configuration["ImageSettings:Folder"]!);
 builder.Services.AddTransient<ICerealService>(provider =>
 {
-    return new CerealService(provider.GetRequiredService<AppDbContext>(), imageFolder);
+    return new CerealService(provider.GetRequiredService<AppDbContext>(), provider.GetRequiredService<IHttpContextAccessor>(), imageFolder);
 });
 
 builder.Services.AddControllers();

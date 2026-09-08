@@ -4,9 +4,11 @@ using Cereal_API.Shared.Models;
 
 namespace Cereal_API.API.Services;
 
-public class CerealService(AppDbContext db, string imageFolder = "") : ICerealService
+public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAccessor, string imageFolder = "") : ICerealService
 {
     private readonly AppDbContext _db = db;
+    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+    private string CurrentUsername => _httpContextAccessor.HttpContext?.User.Identity?.Name ?? "Unknown User";
     private readonly string _imageFolder = imageFolder;
     private readonly string[] imageExtensions = [".jpg", ".jpeg", ".png"];
 
@@ -47,6 +49,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
         cereal.Id = 0;
         cereal.DbVersion = DateTime.UtcNow;
+        cereal.AddCreatedChangeHistory(CurrentUsername);
         _db.Cereals.Add(cereal);
         _db.SaveChanges();
         
@@ -61,6 +64,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
             cereal.Id = 0;
             cereal.DbVersion = DateTime.UtcNow;
+            cereal.AddCreatedChangeHistory(CurrentUsername);
             _db.Cereals.Add(cereal);
         }
         _db.SaveChanges();
@@ -77,6 +81,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
             return dbCereal;
 
         cereal.DbVersion = DateTime.UtcNow;
+        cereal.AddUpdatedChangeHistory(dbCereal, CurrentUsername);
         _db.Cereals.Entry(dbCereal).CurrentValues.SetValues(cereal);
         _db.SaveChanges();
 
@@ -89,6 +94,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
         dbCereal.MarkedAsDeleted = true;
         dbCereal.DbVersion = DateTime.UtcNow;
+        dbCereal.AddDeletedChangeHistory(CurrentUsername);
         _db.Cereals.Update(dbCereal);
         _db.SaveChanges();
 
@@ -101,6 +107,7 @@ public class CerealService(AppDbContext db, string imageFolder = "") : ICerealSe
 
         dbCereal.MarkedAsDeleted = false;
         dbCereal.DbVersion = DateTime.UtcNow;
+        dbCereal.AddRestoredChangeHistory(CurrentUsername);
         _db.Cereals.Update(dbCereal);
         _db.SaveChanges();
 
