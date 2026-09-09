@@ -278,7 +278,8 @@ public class CerealRowViewModel : ViewModelBase
             StringBuilder sb = new();
             foreach (var change in Cereal.ChangeHistory)
             {
-                sb.AppendLine($"{change}\n");
+                sb.AppendLine(change.Timestamp.ToLocalTime().ToString());
+                sb.AppendLine($"{change.Username} {change.Description}\n");
             }
             return sb.ToString().TrimEnd('\n');
         }

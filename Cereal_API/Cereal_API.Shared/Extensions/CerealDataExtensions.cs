@@ -9,24 +9,24 @@ public static class CerealDataExtensions
     {
         if (string.IsNullOrWhiteSpace(cereal.Name))
             throw new ArgumentException("Cereal name is required.");
-        
+
         if (!Enum.IsDefined(typeof(CerealEnums.Manufacturer), cereal.Manufacturer))
             throw new ArgumentException("Invalid cereal manufacturer.");
 
         if (!Enum.IsDefined(typeof(CerealEnums.Type), cereal.Type))
             throw new ArgumentException("Invalid cereal type.");
 
-        if (cereal.Calories < 0 || 
-            cereal.Protein < 0 || 
-            cereal.Fat < 0 || 
+        if (cereal.Calories < 0 ||
+            cereal.Protein < 0 ||
+            cereal.Fat < 0 ||
             cereal.Sodium < 0 ||
-            cereal.Fiber < 0 || 
-            cereal.Carbo < 0 || 
-            cereal.Sugars < 0 || 
+            cereal.Fiber < 0 ||
+            cereal.Carbo < 0 ||
+            cereal.Sugars < 0 ||
             cereal.Potass < 0 ||
-            cereal.Vitamins < 0 || 
-            cereal.Shelf < 0 || 
-            cereal.Weight < 0 || 
+            cereal.Vitamins < 0 ||
+            cereal.Shelf < 0 ||
+            cereal.Weight < 0 ||
             cereal.Cups < 0 ||
             cereal.Rating < 0)
             throw new ArgumentException("Invalid cereal values.");
@@ -109,48 +109,63 @@ public static class CerealDataExtensions
 
     public static void AddCreatedChangeHistory(this CerealData cereal, string user)
     {
-        cereal.ChangeHistory.Add($"{GetTimeAndUserInfo(user)} created the cereal.");
+        cereal.ChangeHistory.Add(new ChangeLog
+        {
+            CerealDataId = cereal.Id,
+            Username = user,
+            Description = "created the cereal."
+        });
     }
 
-    public static void AddUpdatedChangeHistory(this CerealData cereal, CerealData original, string user)
+    public static void AddUpdatedChangeHistory(this CerealData cereal, CerealData newCereal, string user)
     {
-        if (cereal.IsEqual(original))
+        if (cereal.IsEqual(newCereal))
             return;
 
-        StringBuilder changes = new($"{GetTimeAndUserInfo(user)} updated the following fields: ");
-        changes.GetChangeDescription(nameof(cereal.Name), original.Name, cereal.Name);
-        changes.GetChangeDescription(nameof(cereal.Manufacturer), original.Manufacturer, cereal.Manufacturer);
-        changes.GetChangeDescription(nameof(cereal.Type), original.Type, cereal.Type);
-        changes.GetChangeDescription(nameof(cereal.Calories), original.Calories, cereal.Calories);
-        changes.GetChangeDescription(nameof(cereal.Protein), original.Protein, cereal.Protein);
-        changes.GetChangeDescription(nameof(cereal.Fat), original.Fat, cereal.Fat);
-        changes.GetChangeDescription(nameof(cereal.Sodium), original.Sodium, cereal.Sodium);
-        changes.GetChangeDescription(nameof(cereal.Fiber), original.Fiber, cereal.Fiber);
-        changes.GetChangeDescription(nameof(cereal.Carbo), original.Carbo, cereal.Carbo);
-        changes.GetChangeDescription(nameof(cereal.Sugars), original.Sugars, cereal.Sugars);
-        changes.GetChangeDescription(nameof(cereal.Potass), original.Potass, cereal.Potass);
-        changes.GetChangeDescription(nameof(cereal.Vitamins), original.Vitamins, cereal.Vitamins);
-        changes.GetChangeDescription(nameof(cereal.Shelf), original.Shelf, cereal.Shelf);
-        changes.GetChangeDescription(nameof(cereal.Weight), original.Weight, cereal.Weight);
-        changes.GetChangeDescription(nameof(cereal.Cups), original.Cups, cereal.Cups);
-        changes.GetChangeDescription(nameof(cereal.Rating), original.Rating, cereal.Rating);
+        StringBuilder changes = new("updated the following fields: ");
+        changes.GetChangeDescription(nameof(cereal.Name), cereal.Name, newCereal.Name);
+        changes.GetChangeDescription(nameof(cereal.Manufacturer), cereal.Manufacturer, newCereal.Manufacturer);
+        changes.GetChangeDescription(nameof(cereal.Type), cereal.Type, newCereal.Type);
+        changes.GetChangeDescription(nameof(cereal.Calories), cereal.Calories, newCereal.Calories);
+        changes.GetChangeDescription(nameof(cereal.Protein), cereal.Protein, newCereal.Protein);
+        changes.GetChangeDescription(nameof(cereal.Fat), cereal.Fat, newCereal.Fat);
+        changes.GetChangeDescription(nameof(cereal.Sodium), cereal.Sodium, newCereal.Sodium);
+        changes.GetChangeDescription(nameof(cereal.Fiber), cereal.Fiber, newCereal.Fiber);
+        changes.GetChangeDescription(nameof(cereal.Carbo), cereal.Carbo, newCereal.Carbo);
+        changes.GetChangeDescription(nameof(cereal.Sugars), cereal.Sugars, newCereal.Sugars);
+        changes.GetChangeDescription(nameof(cereal.Potass), cereal.Potass, newCereal.Potass);
+        changes.GetChangeDescription(nameof(cereal.Vitamins), cereal.Vitamins, newCereal.Vitamins);
+        changes.GetChangeDescription(nameof(cereal.Shelf), cereal.Shelf, newCereal.Shelf);
+        changes.GetChangeDescription(nameof(cereal.Weight), cereal.Weight, newCereal.Weight);
+        changes.GetChangeDescription(nameof(cereal.Cups), cereal.Cups, newCereal.Cups);
+        changes.GetChangeDescription(nameof(cereal.Rating), cereal.Rating, newCereal.Rating);
 
-        cereal.ChangeHistory.Add(changes.ToString().TrimEnd());
+        cereal.ChangeHistory.Add(new ChangeLog
+        {
+            CerealDataId = cereal.Id,
+            Username = user,
+            Description = changes.ToString().TrimEnd()
+        });
     }
 
     public static void AddDeletedChangeHistory(this CerealData cereal, string user)
     {
-        cereal.ChangeHistory.Add($"{GetTimeAndUserInfo(user)} deleted the cereal.");
+        cereal.ChangeHistory.Add(new ChangeLog
+        {
+            CerealDataId = cereal.Id,
+            Username = user,
+            Description = "deleted the cereal."
+        });
     }
 
     public static void AddRestoredChangeHistory(this CerealData cereal, string user)
     {
-        cereal.ChangeHistory.Add($"{GetTimeAndUserInfo(user)} restored the cereal.");
-    }
-
-    private static string GetTimeAndUserInfo(string user)
-    {
-        return $"{DateTime.UtcNow:yyyy-MM-dd HH:mm} UTC\n{user}";
+        cereal.ChangeHistory.Add(new ChangeLog
+        {
+            CerealDataId = cereal.Id,
+            Username = user,
+            Description = "restored the cereal."
+        });
     }
 
     private static void GetChangeDescription(this StringBuilder builder, string propertyName, object originalValue, object newValue)

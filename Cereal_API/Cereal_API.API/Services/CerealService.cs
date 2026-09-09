@@ -1,6 +1,7 @@
 ﻿using Cereal_API.API.Database;
 using Cereal_API.Shared.Extensions;
 using Cereal_API.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cereal_API.API.Services;
 
@@ -14,12 +15,17 @@ public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAcce
 
     public List<CerealData> GetAllCereals()
     {
-        return _db.Cereals.ToList();
+        return _db.Cereals
+            .Include(c => c.ChangeHistory)
+            .ToList();
     }
 
     public CerealData GetCereal(int id)
     {
-        return _db.Cereals.FirstOrDefault(c => c.Id == id) ?? throw new KeyNotFoundException($"Cereal with id {id} not found");
+        return _db.Cereals
+            .Include(c => c.ChangeHistory)
+            .FirstOrDefault(c => c.Id == id) 
+            ?? throw new KeyNotFoundException($"Cereal with id '{id}' not found");
     }
 
     public (byte[] Data, string ContentType) GetImage(int id)
@@ -81,7 +87,7 @@ public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAcce
             return dbCereal;
 
         cereal.DbVersion = DateTime.UtcNow;
-        cereal.AddUpdatedChangeHistory(dbCereal, CurrentUsername);
+        dbCereal.AddUpdatedChangeHistory(cereal, CurrentUsername);
         _db.Cereals.Entry(dbCereal).CurrentValues.SetValues(cereal);
         _db.SaveChanges();
 
@@ -95,7 +101,6 @@ public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAcce
         dbCereal.MarkedAsDeleted = true;
         dbCereal.DbVersion = DateTime.UtcNow;
         dbCereal.AddDeletedChangeHistory(CurrentUsername);
-        _db.Cereals.Update(dbCereal);
         _db.SaveChanges();
 
         return dbCereal;
@@ -108,7 +113,6 @@ public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAcce
         dbCereal.MarkedAsDeleted = false;
         dbCereal.DbVersion = DateTime.UtcNow;
         dbCereal.AddRestoredChangeHistory(CurrentUsername);
-        _db.Cereals.Update(dbCereal);
         _db.SaveChanges();
 
         return dbCereal;

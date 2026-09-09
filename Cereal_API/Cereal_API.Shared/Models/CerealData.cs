@@ -21,5 +21,5 @@ public class CerealData
     public float Rating { get; set; }
     public DateTime? DbVersion { get; set; } = null;
     public bool MarkedAsDeleted { get; set; } = false;
-    public List<string> ChangeHistory { get; set; } = [];
+    public List<ChangeLog> ChangeHistory { get; set; } = [];
 }

@@ -13,5 +13,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         modelBuilder.Entity<CerealData>().Property(c => c.Manufacturer).HasConversion<string>();
         modelBuilder.Entity<CerealData>().Property(c => c.Type).HasConversion<string>();
+
+        modelBuilder.Entity<ChangeLog>()
+            .HasOne(x => x.CerealData)
+            .WithMany(x => x.ChangeHistory)
+            .HasForeignKey(x => x.CerealDataId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
