@@ -60,8 +60,8 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Image Source="{Binding Image}"
-                                   Width="50"
-                                   Height="50"/>
+                                   Width="100"
+                                   Height="100"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -166,6 +166,25 @@
 
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.Header>
+                        <TextBlock Text="Change History" 
+                                   Style="{StaticResource DataGridColumnHeaderTextBlock}"/>
+                    </DataGridTemplateColumn.Header>
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            
+                            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                          MaxHeight="100">
+                                
+                                <TextBlock Text="{Binding ChangeHistoryText}"/>
+                                
+                            </ScrollViewer>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
                         <TextBlock Text="Actions"
                                    Style="{StaticResource DataGridColumnHeaderTextBlock}"/>
                     </DataGridTemplateColumn.Header>
@@ -173,7 +192,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
 
-                            <StackPanel Orientation="Horizontal"
+                            <StackPanel Orientation="Vertical"
                                         Visibility="{Binding DataContext.IsLoggedIn, RelativeSource={RelativeSource AncestorType=DataGrid}, Converter={StaticResource BoolToVisibility}}"
                                         VerticalAlignment="Top">
 

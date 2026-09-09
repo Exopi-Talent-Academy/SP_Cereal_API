@@ -150,7 +150,7 @@ public static class CerealDataExtensions
 
     private static string GetTimeAndUserInfo(string user)
     {
-        return $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} UTC - {user}";
+        return $"{DateTime.UtcNow:yyyy-MM-dd HH:mm} UTC\n{user}";
     }
 
     private static void GetChangeDescription(this StringBuilder builder, string propertyName, object originalValue, object newValue)

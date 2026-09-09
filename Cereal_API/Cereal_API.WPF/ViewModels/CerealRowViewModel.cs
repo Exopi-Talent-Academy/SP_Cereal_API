@@ -2,6 +2,7 @@
 using Cereal_API.Shared.Extensions;
 using Cereal_API.Shared.Models;
 using System.ComponentModel;
+using System.Text;
 
 namespace Cereal_API.WPF.ViewModels;
 
@@ -268,17 +269,18 @@ public class CerealRowViewModel : ViewModelBase
     }
     #endregion
 
-    public bool MarkedAsDeleted
+    public bool MarkedAsDeleted => Cereal.MarkedAsDeleted;
+
+    public string ChangeHistoryText 
     {
-        get => Cereal.MarkedAsDeleted;
-        set
+        get
         {
-            if (Cereal.MarkedAsDeleted == value)
-                return;
-
-            Cereal.MarkedAsDeleted = value;
-
-            OnPropertyChanged();
+            StringBuilder sb = new();
+            foreach (var change in Cereal.ChangeHistory)
+            {
+                sb.AppendLine($"{change}\n");
+            }
+            return sb.ToString().TrimEnd('\n');
         }
     }
 
