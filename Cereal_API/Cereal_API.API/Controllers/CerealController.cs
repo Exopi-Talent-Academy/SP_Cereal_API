@@ -1,5 +1,6 @@
 ﻿using Cereal_API.API.Database;
 using Cereal_API.API.Services;
+using Cereal_API.Shared.DTOs;
 using Cereal_API.Shared.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -64,7 +65,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
 
     [Authorize(Roles = "Editor,Admin")]
     [HttpPost(Name = "CreateCereal")]
-    public IActionResult Create(CerealData data)
+    public IActionResult Create(CreateCerealDTO data)
     {
         try
         {
@@ -98,7 +99,7 @@ public class CerealController(ICerealService cerealService) : ControllerBase
 
     [Authorize(Roles = "Editor,Admin")]
     [HttpPut(Name = "UpdateCereal")]
-    public IActionResult Update(CerealData data)
+    public IActionResult Update(UpdateCerealDTO data)
     {
         try
         {

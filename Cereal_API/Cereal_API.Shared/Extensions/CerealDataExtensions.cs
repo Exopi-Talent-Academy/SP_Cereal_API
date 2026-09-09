@@ -1,10 +1,34 @@
-﻿using Cereal_API.Shared.Models;
+﻿using Cereal_API.Shared.DTOs;
+using Cereal_API.Shared.Models;
 using System.Text;
 
 namespace Cereal_API.Shared.Extensions;
 
 public static class CerealDataExtensions
 {
+    public static CerealData ToCerealData(this CreateCerealDTO createDTO)
+    {
+        return new CerealData
+        {
+            Name = createDTO.Name,
+            Manufacturer = createDTO.Manufacturer,
+            Type = createDTO.Type,
+            Calories = createDTO.Calories,
+            Protein = createDTO.Protein,
+            Fat = createDTO.Fat,
+            Sodium = createDTO.Sodium,
+            Fiber = createDTO.Fiber,
+            Carbo = createDTO.Carbo,
+            Sugars = createDTO.Sugars,
+            Potass = createDTO.Potass,
+            Vitamins = createDTO.Vitamins,
+            Shelf = createDTO.Shelf,
+            Weight = createDTO.Weight,
+            Cups = createDTO.Cups,
+            Rating = createDTO.Rating,
+        };
+    }
+
     public static void Validate(this CerealData cereal)
     {
         if (string.IsNullOrWhiteSpace(cereal.Name))
@@ -107,6 +131,29 @@ public static class CerealDataExtensions
             original.MarkedAsDeleted == other.MarkedAsDeleted;
     }
 
+    public static bool IsEqual(this CerealData original, UpdateCerealDTO updateDTO)
+    {
+        return
+            original.Id == updateDTO.Id &&
+            original.Name == updateDTO.Name &&
+            original.Manufacturer == updateDTO.Manufacturer &&
+            original.Type == updateDTO.Type &&
+            original.Calories == updateDTO.Calories &&
+            original.Protein == updateDTO.Protein &&
+            original.Fat == updateDTO.Fat &&
+            original.Sodium == updateDTO.Sodium &&
+            original.Fiber == updateDTO.Fiber &&
+            original.Carbo == updateDTO.Carbo &&
+            original.Sugars == updateDTO.Sugars &&
+            original.Potass == updateDTO.Potass &&
+            original.Vitamins == updateDTO.Vitamins &&
+            original.Shelf == updateDTO.Shelf &&
+            original.Weight == updateDTO.Weight &&
+            original.Cups == updateDTO.Cups &&
+            original.Rating == updateDTO.Rating &&
+            original.DbVersion == updateDTO.DbVersion;
+    }
+
     public static void AddCreatedChangeHistory(this CerealData cereal, string user)
     {
         cereal.ChangeHistory.Add(new ChangeLog
@@ -117,11 +164,8 @@ public static class CerealDataExtensions
         });
     }
 
-    public static void AddUpdatedChangeHistory(this CerealData cereal, CerealData newCereal, string user)
+    public static void AddUpdatedChangeHistory(this CerealData cereal, UpdateCerealDTO newCereal, string user)
     {
-        if (cereal.IsEqual(newCereal))
-            return;
-
         StringBuilder changes = new("updated the following fields: ");
         changes.GetChangeDescription(nameof(cereal.Name), cereal.Name, newCereal.Name);
         changes.GetChangeDescription(nameof(cereal.Manufacturer), cereal.Manufacturer, newCereal.Manufacturer);

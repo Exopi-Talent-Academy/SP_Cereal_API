@@ -1,7 +1,10 @@
 ﻿using Cereal_API.API.Services;
 using Cereal_API.Shared;
+using Cereal_API.Shared.DTOs;
 using Cereal_API.Shared.Models;
 using Cereal_API.Tests.Helper;
+using Microsoft.AspNetCore.Http;
+using Moq;
 
 namespace Cereal_API.Tests.APITests;
 
@@ -20,7 +23,8 @@ public sealed class CerealServiceTests
             );
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act
         var actual = service.GetAllCereals();
@@ -41,7 +45,8 @@ public sealed class CerealServiceTests
         context.Add(new CerealData { Id = expectedId, Name = expectedName });
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act
         CerealData actual = service.GetCereal(expectedId);
@@ -57,7 +62,8 @@ public sealed class CerealServiceTests
     {
         // Arrange
         using var context = FakeDbContext.Create();
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.GetCereal(1));
@@ -75,7 +81,8 @@ public sealed class CerealServiceTests
         context.Add(new CerealData { Id = id, Name = fileName });
         context.SaveChanges();
 
-        var service = new CerealService(context, MockFilesHelper.MockFolderPath);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object, MockFilesHelper.MockFolderPath);
 
         // Act
         var (Data, ContentType) = service.GetImage(id);
@@ -97,7 +104,8 @@ public sealed class CerealServiceTests
         context.Add(new CerealData { Id = id, Name = name });
         context.SaveChanges();
 
-        var service = new CerealService(context, MockFilesHelper.MockFolderPath);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object, MockFilesHelper.MockFolderPath);
 
         // Act & Assert
         Assert.ThrowsExactly<FileNotFoundException>(() => service.GetImage(id));
@@ -110,36 +118,35 @@ public sealed class CerealServiceTests
         using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context, MockFilesHelper.MockFolderPath);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.GetImage(1));
     }
 
     [TestMethod]
-    [DataRow(0)]
-    [DataRow(15)]
-    public void CreateCereal_AddsCereal(int id)
+    public void CreateCereal_AddsCereal()
     {
         // Arrange
         int expectedId = 1;
         string expectedName = "A";
-        CerealData newCereal = new() { Id = id, Name = expectedName };
+        CreateCerealDTO createdCereal = new() { Name = expectedName };
 
         using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act
-        var actual = service.CreateCereal(newCereal);
+        var actual = service.CreateCereal(createdCereal);
 
         // Assert
         Assert.IsNotNull(actual);
         Assert.AreEqual(expectedName, actual.Name);
         Assert.AreEqual(expectedId, actual.Id);
         Assert.AreEqual(DateTime.UtcNow.Date, actual.DbVersion?.Date);
-        Assert.AreNotEqual(id, actual.Id);
     }
 
     [TestMethod]
@@ -150,15 +157,16 @@ public sealed class CerealServiceTests
     public void CreateCereal_FailingValidation_ThrowsArgumentException(string name, CerealEnums.Manufacturer manufacturer, CerealEnums.Type type, int calories)
     {
         // Arrange
-        CerealData newCereal = new() { Id = 0, Name = name, Manufacturer = manufacturer, Type = type, Calories = calories };
+        CreateCerealDTO createdCereal = new() { Name = name, Manufacturer = manufacturer, Type = type, Calories = calories };
 
         using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
-        Assert.ThrowsExactly<ArgumentException>(() => service.CreateCereal(newCereal));
+        Assert.ThrowsExactly<ArgumentException>(() => service.CreateCereal(createdCereal));
     }
 
     [TestMethod]
@@ -175,7 +183,8 @@ public sealed class CerealServiceTests
         using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act
         service.CreateCereals(newCereals);
@@ -211,7 +220,8 @@ public sealed class CerealServiceTests
         using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
         Assert.ThrowsExactly<ArgumentException>(() => service.CreateCereals(newCereals));
@@ -230,9 +240,10 @@ public sealed class CerealServiceTests
         context.SaveChanges();
 
         string updatedName = "Updated";
-        CerealData updatedCereal = new() { Id = id, Name = updatedName, DbVersion = dbVersion };
+        UpdateCerealDTO updatedCereal = new() { Id = id, Name = updatedName, DbVersion = dbVersion };
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act
         var actual = service.UpdateCereal(updatedCereal);
@@ -249,15 +260,16 @@ public sealed class CerealServiceTests
     public void UpdateCereal_InvalidId_ThrowsKeyNotFound()
     {
         // Arrange
-        CerealData newCereal = new() { Id = 1, Name = "Updated" };
+        UpdateCerealDTO updatedCereal = new() { Id = 1, Name = "Updated" };
 
         using var context = FakeDbContext.Create();
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
-        Assert.ThrowsExactly<KeyNotFoundException>(() => service.UpdateCereal(newCereal));
+        Assert.ThrowsExactly<KeyNotFoundException>(() => service.UpdateCereal(updatedCereal));
     }
 
     [TestMethod]
@@ -267,16 +279,17 @@ public sealed class CerealServiceTests
         int id = 1;
         DateTime dbVersion = DateTime.UtcNow.AddDays(-5);
 
-        CerealData newCereal = new() { Id = id, Name = "Updated", DbVersion = dbVersion };
+        UpdateCerealDTO updatedCereal = new() { Id = id, Name = "Updated", DbVersion = dbVersion };
 
         using var context = FakeDbContext.Create();
         context.Add(new CerealData { Id = id, Name = "Old", DbVersion = dbVersion.AddDays(2) });
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
-        Assert.ThrowsExactly<InvalidOperationException>(() => service.UpdateCereal(newCereal));
+        Assert.ThrowsExactly<InvalidOperationException>(() => service.UpdateCereal(updatedCereal));
     }
 
     [TestMethod]
@@ -294,7 +307,8 @@ public sealed class CerealServiceTests
             );
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act
         var actual = service.DeleteCereal(idToDelete);
@@ -311,7 +325,8 @@ public sealed class CerealServiceTests
     {
         // Arrange
         using var context = FakeDbContext.Create();
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.DeleteCereal(1));
@@ -332,7 +347,8 @@ public sealed class CerealServiceTests
             );
         context.SaveChanges();
 
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act
         var actual = service.RestoreCereal(deletedId);
@@ -349,7 +365,8 @@ public sealed class CerealServiceTests
     {
         // Arrange
         using var context = FakeDbContext.Create();
-        var service = new CerealService(context);
+        var httpContextAccessor = new Mock<IHttpContextAccessor>();
+        var service = new CerealService(context, httpContextAccessor.Object);
 
         // Act & Assert
         Assert.ThrowsExactly<KeyNotFoundException>(() => service.RestoreCereal(1));

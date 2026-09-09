@@ -1,6 +1,7 @@
 ﻿using Cereal_API.API.Controllers;
 using Cereal_API.API.Database;
 using Cereal_API.API.Services;
+using Cereal_API.Shared.DTOs;
 using Cereal_API.Shared.Models;
 using Cereal_API.Tests.Helper;
 using Microsoft.AspNetCore.Http;
@@ -172,32 +173,32 @@ public class CerealControllerTests
     public void Create_ValidRequest_ReturnsOK()
     {
         // Arrange
-        CerealData newCereal = new() { Id = 0, Name = "New" };
+        CreateCerealDTO createdCereal = new() { Name = "New" };
 
         var service = new Mock<ICerealService>();
         var controller = new CerealController(service.Object);
 
         // Act
-        var actual = controller.Create(newCereal);
+        var actual = controller.Create(createdCereal);
 
         // Assert
         Assert.IsInstanceOfType<OkObjectResult>(actual);
-        service.Verify(x => x.CreateCereal(newCereal), Times.Once);
+        service.Verify(x => x.CreateCereal(createdCereal), Times.Once);
     }
 
     [TestMethod]
     public void Create_InvalidRequest_ReturnsBadRequest()
     {
         // Arrange
-        CerealData newCereal = new() { Id = 0, Name = "New" };
+        CreateCerealDTO createdCereal = new() { Name = "New" };
 
         var service = new Mock<ICerealService>();
-        service.Setup(s => s.CreateCereal(newCereal)).Throws<ArgumentException>();
+        service.Setup(s => s.CreateCereal(createdCereal)).Throws<ArgumentException>();
 
         var controller = new CerealController(service.Object);
 
         // Act
-        var actual = controller.Create(newCereal);
+        var actual = controller.Create(createdCereal);
 
         // Assert
         Assert.IsInstanceOfType<BadRequestResult>(actual);
@@ -234,7 +235,7 @@ public class CerealControllerTests
     public void Update_ValidRequest_ReturnsOK()
     {
         // Arrange
-        CerealData newCereal = new() { Id = 1, Name = "New" };
+        UpdateCerealDTO newCereal = new() { Id = 1, Name = "New" };
 
         var service = new Mock<ICerealService>();
         var controller = new CerealController(service.Object);
@@ -251,7 +252,7 @@ public class CerealControllerTests
     public void Update_InvalidId_ReturnNotFound()
     {
         // Arrange
-        CerealData newCereal = new() { Id = 1, Name = "New" };
+        UpdateCerealDTO newCereal = new() { Id = 1, Name = "New" };
 
         var service = new Mock<ICerealService>();
         service.Setup(s => s.UpdateCereal(newCereal)).Throws<KeyNotFoundException>();
@@ -269,7 +270,7 @@ public class CerealControllerTests
     public void Update_ConcurrentUpdate_ReturnsConflict()
     {
         // Arrange
-        CerealData newCereal = new() { Id = 1, Name = "New" };
+        UpdateCerealDTO newCereal = new() { Id = 1, Name = "New" };
 
         var service = new Mock<ICerealService>();
         service.Setup(s => s.UpdateCereal(newCereal)).Throws<InvalidOperationException>();

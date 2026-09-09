@@ -11,5 +11,5 @@ public class ChangeLog()
     public string Description { get; set; } = string.Empty;
 
     public int CerealDataId { get; set; }
-    [JsonIgnore] public CerealData? CerealData { get; set; }
+    [JsonIgnore] public CerealData CerealData { get; set; } = null!;
 }

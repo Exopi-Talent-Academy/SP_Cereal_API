@@ -1,4 +1,5 @@
-﻿using Cereal_API.Shared.Models;
+﻿using Cereal_API.Shared.DTOs;
+using Cereal_API.Shared.Models;
 
 namespace Cereal_API.API.Services;
 
@@ -10,11 +11,11 @@ public interface ICerealService
 
     (byte[] Data, string ContentType) GetImage(int id);
 
-    CerealData CreateCereal(CerealData cereal);
+    CerealData CreateCereal(CreateCerealDTO cereal);
 
     void CreateCereals(List<CerealData> cereals);
 
-    CerealData UpdateCereal(CerealData cereal);
+    CerealData UpdateCereal(UpdateCerealDTO cereal);
 
     CerealData DeleteCereal(int id);
 

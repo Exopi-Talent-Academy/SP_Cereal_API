@@ -1,4 +1,5 @@
 ﻿using Cereal_API.API.Database;
+using Cereal_API.Shared.DTOs;
 using Cereal_API.Shared.Extensions;
 using Cereal_API.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -49,8 +50,10 @@ public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAcce
         return (File.ReadAllBytes(imagePath), contentType);
     }
 
-    public CerealData CreateCereal(CerealData cereal)
+    public CerealData CreateCereal(CreateCerealDTO cerealDTO)
     {
+        CerealData cereal = cerealDTO.ToCerealData();
+
         cereal.Validate();
 
         cereal.Id = 0;
@@ -76,7 +79,7 @@ public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAcce
         _db.SaveChanges();
     }
 
-    public CerealData UpdateCereal(CerealData cereal)
+    public CerealData UpdateCereal(UpdateCerealDTO cereal)
     {
         CerealData dbCereal = GetCereal(cereal.Id);
         
