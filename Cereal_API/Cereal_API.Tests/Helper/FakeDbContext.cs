@@ -1,5 +1,4 @@
-﻿using Cereal_API.API.Database;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Cereal_API.Tests.Helper;
 

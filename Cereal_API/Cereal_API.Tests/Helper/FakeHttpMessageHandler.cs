@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Net;
-using System.Text;
 
 namespace Cereal_API.Tests.Helper;
 

@@ -1,8 +1,4 @@
-﻿using Cereal_API.Shared;
-using Cereal_API.Shared.Extensions;
-using Cereal_API.Shared.Models;
-using System.ComponentModel;
-using System.Text;
+﻿using System.Text;
 
 namespace Cereal_API.WPF.ViewModels;
 

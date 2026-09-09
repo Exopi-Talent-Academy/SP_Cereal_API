@@ -1,7 +1,4 @@
-﻿using Cereal_API.Shared;
-using Cereal_API.WPF.Commands;
-using Cereal_API.WPF.Filters;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Cereal_API.WPF.ViewModels;
 

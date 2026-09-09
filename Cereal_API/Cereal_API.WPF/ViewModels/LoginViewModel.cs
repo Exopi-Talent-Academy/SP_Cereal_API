@@ -1,7 +1,4 @@
-﻿using Cereal_API.WPF.Commands;
-using Cereal_API.WPF.Helpers;
-using Cereal_API.WPF.Services;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
 namespace Cereal_API.WPF.ViewModels;
 

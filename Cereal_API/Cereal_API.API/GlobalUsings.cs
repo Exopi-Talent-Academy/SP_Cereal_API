@@ -1,0 +1,10 @@
+﻿global using Cereal_API.API.Authentication;
+global using Cereal_API.API.Database;
+global using Cereal_API.API.Services;
+global using Cereal_API.Shared;
+global using Cereal_API.Shared.DTOs;
+global using Cereal_API.Shared.Extensions;
+global using Cereal_API.Shared.Models;
+global using Microsoft.AspNetCore.Authentication;
+global using Microsoft.AspNetCore.Authorization;
+global using Microsoft.EntityFrameworkCore;

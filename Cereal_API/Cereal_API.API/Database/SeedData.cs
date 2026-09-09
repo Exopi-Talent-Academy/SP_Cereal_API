@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Cereal_API.API.Database;
+﻿namespace Cereal_API.API.Database;
 
 public static class SeedData
 {

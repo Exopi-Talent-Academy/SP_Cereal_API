@@ -1,7 +1,4 @@
-﻿using Cereal_API.Shared.Models;
-using Cereal_API.WPF.ViewModels;
-
-namespace Cereal_API.WPF.Filters;
+﻿namespace Cereal_API.WPF.Filters;
 
 public static class CerealFilter
 {

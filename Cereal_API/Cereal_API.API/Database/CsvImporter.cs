@@ -1,7 +1,4 @@
-﻿using Cereal_API.Shared;
-using Cereal_API.Shared.Extensions;
-using Cereal_API.Shared.Models;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace Cereal_API.API.Database;
 

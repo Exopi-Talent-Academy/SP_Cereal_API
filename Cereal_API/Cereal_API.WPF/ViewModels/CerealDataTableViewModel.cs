@@ -1,12 +1,5 @@
-﻿using Cereal_API.Shared;
-using Cereal_API.Shared.Models;
-using Cereal_API.WPF.Commands;
-using Cereal_API.WPF.Filters;
-using Cereal_API.WPF.Helpers;
-using Cereal_API.WPF.Services;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Net;
 using System.Net.Http;
 using System.Text;

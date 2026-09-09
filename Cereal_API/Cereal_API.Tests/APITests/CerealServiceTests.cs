@@ -1,12 +1,4 @@
-﻿using Cereal_API.API.Services;
-using Cereal_API.Shared;
-using Cereal_API.Shared.DTOs;
-using Cereal_API.Shared.Models;
-using Cereal_API.Tests.Helper;
-using Microsoft.AspNetCore.Http;
-using Moq;
-
-namespace Cereal_API.Tests.APITests;
+﻿namespace Cereal_API.Tests.APITests;
 
 [TestClass]
 public sealed class CerealServiceTests

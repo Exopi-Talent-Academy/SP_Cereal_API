@@ -1,0 +1,14 @@
+﻿global using Cereal_API.API.Controllers;
+global using Cereal_API.API.Database;
+global using Cereal_API.API.Services;
+global using Cereal_API.Shared;
+global using Cereal_API.Shared.DTOs;
+global using Cereal_API.Shared.Models;
+global using Cereal_API.Tests.Helper;
+global using Cereal_API.WPF.Filters;
+global using Cereal_API.WPF.Services;
+global using Cereal_API.WPF.ViewModels;
+global using Microsoft.AspNetCore.Http;
+global using Moq;
+global using System.Net;
+global using System.Text;

@@ -1,9 +1,4 @@
-﻿using Cereal_API.API.Database;
-using Cereal_API.API.Services;
-using Cereal_API.Shared.DTOs;
-using Cereal_API.Shared.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace Cereal_API.API.Controllers;

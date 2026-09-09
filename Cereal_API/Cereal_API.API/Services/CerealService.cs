@@ -1,10 +1,4 @@
-﻿using Cereal_API.API.Database;
-using Cereal_API.Shared.DTOs;
-using Cereal_API.Shared.Extensions;
-using Cereal_API.Shared.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace Cereal_API.API.Services;
+﻿namespace Cereal_API.API.Services;
 
 public class CerealService(AppDbContext db, IHttpContextAccessor httpContextAccessor, string imageFolder = "") : ICerealService
 {

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Cereal_API.WPF.ViewModels;
+﻿namespace Cereal_API.WPF.ViewModels;
 
 public class ColumnHeaderViewModel : ViewModelBase
 {

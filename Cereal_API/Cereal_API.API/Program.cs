@@ -1,8 +1,3 @@
-using Cereal_API.API.Authentication;
-using Cereal_API.API.Database;
-using Cereal_API.API.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);

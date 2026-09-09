@@ -1,9 +1,4 @@
-﻿using Cereal_API.WPF.Filters;
-using Cereal_API.Shared.Models;
-using Cereal_API.WPF.ViewModels;
-using Cereal_API.Shared;
-
-namespace Cereal_API.Tests.WPFTests;
+﻿namespace Cereal_API.Tests.WPFTests;
 
 [TestClass]
 public class CerealFilterTests

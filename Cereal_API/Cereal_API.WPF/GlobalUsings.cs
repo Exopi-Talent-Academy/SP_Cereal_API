@@ -1,0 +1,9 @@
+﻿global using Cereal_API.Shared;
+global using Cereal_API.Shared.Extensions;
+global using Cereal_API.Shared.Models;
+global using Cereal_API.WPF.Commands;
+global using Cereal_API.WPF.Filters;
+global using Cereal_API.WPF.Helpers;
+global using Cereal_API.WPF.Services;
+global using Cereal_API.WPF.ViewModels;
+global using System.ComponentModel;

@@ -1,7 +1,4 @@
-﻿using Cereal_API.Shared.Models;
-using Microsoft.EntityFrameworkCore;
-
-namespace Cereal_API.API.Database;
+﻿namespace Cereal_API.API.Database;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {

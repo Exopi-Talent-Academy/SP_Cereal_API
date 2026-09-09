@@ -1,10 +1,4 @@
-﻿using Cereal_API.Shared.Models;
-using Cereal_API.Tests.Helper;
-using Cereal_API.WPF.Services;
-using System.Net;
-using System.Text;
-
-namespace Cereal_API.Tests.WPFTests;
+﻿namespace Cereal_API.Tests.WPFTests;
 
 [TestClass]
 public class CerealHttpServiceTests

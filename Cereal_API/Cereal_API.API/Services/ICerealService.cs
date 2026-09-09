@@ -1,7 +1,4 @@
-﻿using Cereal_API.Shared.DTOs;
-using Cereal_API.Shared.Models;
-
-namespace Cereal_API.API.Services;
+﻿namespace Cereal_API.API.Services;
 
 public interface ICerealService
 {
